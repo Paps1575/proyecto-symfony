@@ -1,0 +1,38 @@
+<h1>Paso 2: Confirmación de Datos</h1>
+
+<nav aria-label="breadcrumb">
+    <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
+        {% for crumb in breadcrumbs %}
+            <li>
+                {% if not loop.last %}
+                    <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
+                {% else %}
+                    <strong>{{ crumb.name }}</strong>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>
+
+<hr>
+<p>Revisa que tus datos sean correctos antes de mandarlos a la base de datos.</p>
+
+<div style="background: #e9ecef; padding: 20px; border-left: 5px solid #007bff; border-radius: 5px;">
+    <p style="font-size: 1.2rem;">
+        <strong>Nombre del usuario:</strong> {{ nombre }}
+    </p>
+    <p style="color: #666; font-size: 0.9rem;">
+        Si el nombre no es correcto, puedes regresar al paso anterior.
+    </p>
+</div>
+
+<br>
+<div style="margin-top: 20px;">
+    <a href="{{ path('app_registro') }}" style="color: #dc3545; text-decoration: none; font-weight: bold;">
+        &larr; Regresar a editar
+    </a>
+    <span style="margin: 0 15px; color: #ccc;">|</span>
+    <a href="{{ path('app_exito') }}" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+        Confirmar y continuar &rarr;
+    </a>
+</div>

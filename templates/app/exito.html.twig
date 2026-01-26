@@ -1,0 +1,35 @@
+{# templates/app/exito.html.twig #}
+
+{% for message in app.flashes('success') %}
+    <div style="background: #d4edda; color: #155724; padding: 15px; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 20px;">
+        {{ message }}
+    </div>
+{% endfor %}
+<h1>Paso 3: ¡Finalizado!</h1>
+
+<nav aria-label="breadcrumb">
+    <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
+        {% for crumb in breadcrumbs %}
+            <li>
+                {% if not loop.last %}
+                    <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
+                {% else %}
+                    <strong>{{ crumb.name }}</strong>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>
+
+<hr>
+
+<div style="text-align: center; border: 2px solid #28a745; padding: 20px; border-radius: 10px;">
+    <h2 style="color: #28a745;">¡Registro Completado!</h2>
+    <p>Presiona el siguiente botón para guardar este registro en tu base de datos relacional (MariaDB).</p>
+
+    <form action="#" method="POST">
+        <button type="submit" style="background: #007bff; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 5px; cursor: pointer;">
+            Mandar datos a BD
+        </button>
+    </form>
+</div>

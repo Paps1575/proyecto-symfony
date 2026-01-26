@@ -1,0 +1,27 @@
+{# templates/app/registro.html.twig #}
+<h1>Paso 1: Registro</h1>
+
+{# Aquí se pintan los Breadcrumbs #}
+<nav aria-label="breadcrumb">
+    <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
+        {% for crumb in breadcrumbs %}
+            <li>
+                {% if not loop.last %}
+                    <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
+                {% else %}
+                    <strong>{{ crumb.name }}</strong>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>
+
+<hr>
+
+{# Aquí se pinta el formulario con sus errores #}
+<div style="max-width: 400px;">
+    {{ form_start(formulario) }}
+    {{ form_widget(formulario) }}
+    <button type="submit" style="margin-top: 10px;">Siguiente Paso</button>
+    {{ form_end(formulario) }}
+</div>
