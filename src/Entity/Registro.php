@@ -30,6 +30,7 @@ class Registro
     public function setNombre(string $nombre): static
     {
         $this->nombre = $nombre;
+
         return $this;
     }
 }

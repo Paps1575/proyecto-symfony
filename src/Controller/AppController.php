@@ -14,8 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class AppController extends AbstractController
 {
     /**
-     * PASO 1: Pantalla de Registro
-     * Aquí mostramos el formulario y aplicamos validaciones (Regex, NotBlank, etc.).
+     * PASO 1: Pantalla de Registro con reCAPTCHA y Manejo de Errores.
      */
     #[Route('/registro', name: 'app_registro')]
     public function registro(Request $request): Response
@@ -24,11 +23,19 @@ class AppController extends AbstractController
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Guardamos el nombre en la sesión para recuperarlo después
-            $request->getSession()->set('usuario_nombre', $datos->nombre);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                // Si el reCAPTCHA es válido y no hay errores de validación
+                $request->getSession()->set('usuario_nombre', $datos->nombre);
 
-            return $this->redirectToRoute('app_confirmar');
+                // Mensaje opcional para confirmar que pasó el filtro
+                $this->addFlash('success', 'Validación correcta, gallo.');
+
+                return $this->redirectToRoute('app_confirmar');
+            }
+            // MANEJO DE ERRORES: Si algo falla (captcha o validación),
+            // Symfony inyecta los errores en la vista automáticamente.
+            $this->addFlash('error', '¡Aguas! Revisa los errores del formulario.');
         }
 
         return $this->render('app/registro.html.twig', [
@@ -41,8 +48,7 @@ class AppController extends AbstractController
     }
 
     /**
-     * PASO 2: Confirmación de Datos
-     * Mostramos lo que el usuario escribió (recuperado de la sesión).
+     * PASO 2: Confirmación de Datos.
      */
     #[Route('/confirmar', name: 'app_confirmar')]
     public function confirmar(Request $request): Response
@@ -60,24 +66,28 @@ class AppController extends AbstractController
     }
 
     /**
-     * PASO 3: Éxito y Guardado en BD
-     * El botón final dispara un POST para insertar el dato en MariaDB.
+     * PASO 3: Éxito y Guardado Final en MySQL.
      */
     #[Route('/exito', name: 'app_exito', methods: ['GET', 'POST'])]
     public function exito(Request $request, EntityManagerInterface $em): Response
     {
+        // Solo guardamos si se llega por POST desde la confirmación
         if ($request->isMethod('POST')) {
             $nombre = $request->getSession()->get('usuario_nombre', 'Anónimo');
 
-            // Creamos el objeto de la entidad para la base de datos
             $registro = new Registro();
             $registro->setNombre($nombre);
 
-            // Persistimos en MariaDB
-            $em->persist($registro);
-            $em->flush();
+            try {
+                $em->persist($registro);
+                $em->flush();
+                $this->addFlash('success', '¡Registro guardado con éxito en Railway!');
+            } catch (\Exception $e) {
+                // Manejo de error si falla la conexión a la DB
+                $this->addFlash('error', 'Error al guardar: '.$e->getMessage());
 
-            $this->addFlash('success', '¡Registro guardado con éxito en la base de datos relacional!');
+                return $this->redirectToRoute('app_registro');
+            }
         }
 
         return $this->render('app/exito.html.twig', [
