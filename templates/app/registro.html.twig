@@ -1,27 +1,72 @@
 {# templates/app/registro.html.twig #}
-<h1>Paso 1: Registro</h1>
 
-{# Aquí se pintan los Breadcrumbs #}
-<nav aria-label="breadcrumb">
-    <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
-        {% for crumb in breadcrumbs %}
-            <li>
-                {% if not loop.last %}
-                    <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
-                {% else %}
-                    <strong>{{ crumb.name }}</strong>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ol>
-</nav>
+{% extends 'base.html.twig' %}
 
-<hr>
+{% block title %}Paso 1: Registro{% endblock %}
 
-{# Aquí se pinta el formulario con sus errores #}
-<div style="max-width: 400px;">
-    {{ form_start(formulario) }}
-    {{ form_widget(formulario) }}
-    <button type="submit" style="margin-top: 10px;">Siguiente Paso</button>
-    {{ form_end(formulario) }}
-</div>
+{% block javascripts %}
+    {{ parent() }}
+    {# PASO CLAVE: Este script carga la funcionalidad de Google en tu arquitectura #}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+{% block body %}
+    <h1>Paso 1: Registro</h1>
+
+    {# Aquí se pintan los Breadcrumbs #}
+    <nav aria-label="breadcrumb">
+        <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
+            {% for crumb in breadcrumbs %}
+                <li>
+                    {% if not loop.last %}
+                        <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
+                    {% else %}
+                        <strong>{{ crumb.name }}</strong>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </nav>
+
+    <hr>
+
+    {# MANEJO DE ERRORES: Mensajes Flash para errores generales #}
+    {% for message in app.flashes('error') %}
+        <div style="color: white; background-color: #d9534f; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div style="max-width: 400px;">
+        {{ form_start(formulario) }}
+
+        {# Renderizamos los campos normales (Nombre, etc.) #}
+        <div style="margin-bottom: 15px;">
+            {{ form_label(formulario.nombre) }}
+            {{ form_widget(formulario.nombre, {'attr': {'style': 'width: 100%; padding: 8px;'}}) }}
+            <div style="color: #d9534f; font-size: 0.8em;">
+                {{ form_errors(formulario.nombre) }}
+            </div>
+        </div>
+
+        {# PASO CLAVE: Aquí se pinta el cuadro de "No soy un robot" #}
+        <div style="margin-bottom: 15px;">
+            {{ form_widget(formulario.captcha) }}
+            <div style="color: #d9534f; font-size: 0.8em;">
+                {{ form_errors(formulario.captcha) }}
+            </div>
+        </div>
+
+        <button type="submit" style="margin-top: 10px; padding: 10px 20px; cursor: pointer;">
+            Siguiente Paso
+        </button>
+
+        {{ form_end(formulario) }}
+    </div>
+
+    <style>
+        /* Estilo rápido para que los errores se vean rojos y pro */
+        .invalid-feedback { color: #d9534f; display: block; }
+        input { display: block; margin-bottom: 5px; }
+    </style>
+{% endblock %}
