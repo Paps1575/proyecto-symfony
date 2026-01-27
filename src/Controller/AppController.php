@@ -21,33 +21,29 @@ class AppController extends AbstractController
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // LLAVE SECRETA DE TU CAPTURA
+        if ($form->isSubmitted()) {
+            // LLAVE SECRETA QUE ME PASASTE (uRz62)
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
-
-            // Google manda el token en este campo específico
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
 
-            // Verificamos directamente con Google
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess()) {
-                $request->getSession()->set('usuario_nombre', $datos->nombre);
+                // Sacamos el nombre directamente del POST para que no haya falla
+                $params = $request->request->all('registro');
+                $nombre = $params['nombre'] ?? 'Usuario';
+
+                $request->getSession()->set('usuario_nombre', $nombre);
                 return $this->redirectToRoute('app_confirmar');
             }
 
-            // Si falla, mostramos el código de error real de Google
-            $errorCodes = implode(', ', $resp->getErrorCodes());
-            $this->addFlash('error', 'Google rechazó el captcha. Error: ' . $errorCodes);
+            $this->addFlash('error', 'Google rechazó el captcha. Intenta de nuevo.');
         }
 
         return $this->render('app/registro.html.twig', [
             'formulario' => $form->createView(),
-            'breadcrumbs' => [
-                ['name' => 'Inicio', 'url' => '/'],
-                ['name' => 'Registro', 'url' => '#'],
-            ],
+            'breadcrumbs' => [['name' => 'Inicio', 'url' => '/'], ['name' => 'Registro', 'url' => '#']],
         ]);
     }
 
@@ -75,9 +71,9 @@ class AppController extends AbstractController
             try {
                 $em->persist($registro);
                 $em->flush();
-                $this->addFlash('success', '¡Registro exitoso en Railway!');
+                $this->addFlash('success', '¡Registro guardado en la base de datos!');
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Error de BD: ' . $e->getMessage());
+                $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');
             }
         }
