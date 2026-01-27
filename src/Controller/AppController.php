@@ -22,13 +22,13 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // TU LLAVE SECRETA DE GOOGLE
+            // LLAVES QUE ME PASASTE (Hardcodeadas para que no haya duda)
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
 
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
 
-            // Verificación directa con Google
+            // Verificación directa
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess() && $form->isValid()) {
@@ -36,7 +36,9 @@ class AppController extends AbstractController
                 return $this->redirectToRoute('app_confirmar');
             }
 
-            $this->addFlash('error', 'Google no validó el captcha con esa clave secreta.');
+            // Si falla, imprimimos los errores de Google en el flash para saber QUÉ PASÓ
+            $errorCodes = implode(', ', $resp->getErrorCodes());
+            $this->addFlash('error', 'Google rechazó el captcha. Error: ' . $errorCodes);
         }
 
         return $this->render('app/registro.html.twig', [
