@@ -9,22 +9,29 @@
     <h1>Paso 1: Registro</h1>
     <hr>
 
+    {# Alertas de error #}
     {% for message in app.flashes('error') %}
-        <div style="color: white; background: red; padding: 10px; margin-bottom: 10px;">
+        <div style="color: white; background: #d9534f; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
             {{ message }}
         </div>
     {% endfor %}
 
-    <div style="max-width: 400px; padding: 20px; border: 1px solid #ccc;">
+    <div style="max-width: 450px; padding: 20px; border: 1px solid #ddd; background: #f9f9f9;">
         {{ form_start(formulario) }}
-        {{ form_row(formulario.nombre) }}
-
-        <div style="margin: 20px 0;">
-            {# LLAVE DE SITIO QUE ME PASASTE #}
-            <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
+        <div style="margin-bottom: 20px;">
+            {{ form_label(formulario.nombre, 'Nombre Completo:') }}
+            {{ form_widget(formulario.nombre, {'attr': {'style': 'width: 100%; padding: 8px;'}}) }}
         </div>
 
-        <button type="submit" style="width: 100%; padding: 10px; background: blue; color: white;">
+        <div style="margin-bottom: 20px;">
+            <label>Verificación de seguridad:</label>
+            <div style="margin-top: 10px;">
+                {# TU LLAVE DE SITIO #}
+                <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
+            </div>
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
             Siguiente Paso
         </button>
         {{ form_end(formulario, {'render_rest': false}) }}

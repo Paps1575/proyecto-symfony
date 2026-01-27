@@ -22,13 +22,13 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // LLAVE SECRETA QUE ME PASASTE
+            // TU LLAVE SECRETA DE GOOGLE
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
 
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
 
-            // Verificación directa
+            // Verificación directa con Google
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess() && $form->isValid()) {
