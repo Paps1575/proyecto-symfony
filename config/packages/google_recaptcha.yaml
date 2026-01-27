@@ -1,5 +1,5 @@
 services:
-    # Registramos la clase de Google como un servicio para que Symfony la reconozca
+    # Registramos la clase oficial de Google como un servicio
     ReCaptcha\ReCaptcha:
         arguments:
             $secret: '%env(RECAPTCHA_SECRET_KEY)%'

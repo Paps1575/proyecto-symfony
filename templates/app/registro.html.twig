@@ -40,8 +40,8 @@
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {# LA LLAVE QUE COPIASTE DEL BOTÓN #}
-                <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
+                {# Usamos la variable de entorno que ya tienes en Railway #}
+                <div class="g-recaptcha" data-sitekey="{{ app.request.server.get('RECAPTCHA_SITE_KEY') }}"></div>
             </div>
         </div>
 

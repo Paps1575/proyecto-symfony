@@ -33,6 +33,7 @@ class AppController extends AbstractController
             $this->addFlash('error', '¡Aguas! Por favor verifica el captcha de Google.');
         }
 
+        // Siempre mandamos el FormView para evitar errores de renderizado
         return $this->render('app/registro.html.twig', [
             'formulario' => $form->createView(),
             'breadcrumbs' => [
@@ -66,7 +67,7 @@ class AppController extends AbstractController
             try {
                 $em->persist($registro);
                 $em->flush();
-                $this->addFlash('success', '¡Registro guardado en Railway!');
+                $this->addFlash('success', '¡Registro guardado con éxito!');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');
