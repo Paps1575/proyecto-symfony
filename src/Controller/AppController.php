@@ -22,17 +22,20 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // HARDCODEO DE SECRET KEY (La que termina en Rz62)
+            // CLAVE SECRETA COPIADA DE TU CAPTURA image_905136.png
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
 
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
-            $resp = $recaptcha->verify($gRecaptchaResponse, $request->getClientIp());
+
+            // Validamos solo con el token (sin IP para evitar líos con Railway)
+            $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess() && $form->isValid()) {
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
                 return $this->redirectToRoute('app_confirmar');
             }
+
             $this->addFlash('error', '¡Aguas! Google dice que no pasaste el captcha.');
         }
 
