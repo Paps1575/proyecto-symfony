@@ -28,7 +28,7 @@ class RegistroType extends AbstractType
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'invalid_message' => 'Las contraseñas no coinciden, gallo.',
+                'invalid_message' => 'Las contraseñas no coinciden.',
                 'first_options' => ['label' => 'Contraseña'],
                 'second_options' => ['label' => 'Confirma tu Contraseña'],
             ])

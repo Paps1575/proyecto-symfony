@@ -1,34 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-{% endblock %}
-
 {% block body %}
     <h1>Paso 1: Registro</h1>
     <hr>
 
-    {% for message in app.flashes('error') %}
-        <div style="color: white; background: #d9534f; padding: 10px; margin-bottom: 15px;">
-            {{ message }}
+    {# BLOQUE DE ALERTAS DE ERROR #}
+    {% if not formulario.vars.valid %}
+        <div style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-family: sans-serif;">
+            <strong>¡Aguas! Corrige lo siguiente:</strong>
+            <ul style="margin-top: 5px;">
+                {% for child in formulario.children %}
+                    {% for error in child.vars.errors %}
+                        <li><strong>{{ child.vars.label }}:</strong> {{ error.message }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
         </div>
-    {% endfor %}
+    {% endif %}
 
-    <div style="max-width: 450px; padding: 20px; border: 1px solid #ccc; background: #fefefe;">
+    <div style="max-width: 500px; padding: 20px; border: 1px solid #ddd; background: #fff; border-radius: 8px;">
         {{ form_start(formulario) }}
         <div style="margin-bottom: 15px;">
-            <label>Escribe tu nombre completo:</label>
+            {{ form_label(formulario.nombre) }}
             {{ form_widget(formulario.nombre, {'attr': {'style': 'width:100%; padding: 8px;'}}) }}
         </div>
-
         <div style="margin-bottom: 15px;">
-            {# LLAVE DE SITIO QUE TERMINA EN LHlND #}
+            {{ form_label(formulario.email) }}
+            {{ form_widget(formulario.email, {'attr': {'style': 'width:100%; padding: 8px;'}}) }}
+        </div>
+        <div style="margin-bottom: 15px;">
+            {{ form_label(formulario.telefono) }}
+            {{ form_widget(formulario.telefono, {'attr': {'style': 'width:100%; padding: 8px;'}}) }}
+        </div>
+
+        {# Campos de Password Repetido #}
+        <div style="margin-bottom: 15px;">
+            {{ form_label(formulario.password.first) }}
+            {{ form_widget(formulario.password.first, {'attr': {'style': 'width:100%; padding: 8px;'}}) }}
+        </div>
+        <div style="margin-bottom: 15px;">
+            {{ form_label(formulario.password.second) }}
+            {{ form_widget(formulario.password.second, {'attr': {'style': 'width:100%; padding: 8px;'}}) }}
+        </div>
+
+        <div style="margin-bottom: 20px;">
             <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
         </div>
 
-        <button type="submit" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
-            Siguiente Paso
+        <button type="submit" style="width: 100%; padding: 12px; background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;">
+            Validar y Continuar
         </button>
         {{ form_end(formulario, {'render_rest': false}) }}
     </div>
