@@ -1,3 +1,4 @@
+{# templates/app/registro.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Paso 1: Registro{% endblock %}
@@ -38,18 +39,17 @@
         <div style="margin-bottom: 20px;">
             {{ form_label(formulario.nombre, 'Escribe tu nombre completo:') }}
             {{ form_widget(formulario.nombre, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ccc;'}}) }}
-            <div style="color: #d9534f; font-size: 0.9em;">{{ form_errors(formulario.nombre) }}</div>
+            <div style="color: #d9534f;">{{ form_errors(formulario.nombre) }}</div>
         </div>
 
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {# SEGURO: Verificamos que el captcha exista para evitar el error 500 #}
                 {% if formulario.captcha is defined and formulario.captcha is not null %}
                     {{ form_widget(formulario.captcha) }}
-                    <div style="color: #d9534f; font-size: 0.9em;">{{ form_errors(formulario.captcha) }}</div>
+                    <div style="color: #d9534f;">{{ form_errors(formulario.captcha) }}</div>
                 {% else %}
-                    <p style="color: #d9534f; font-weight: bold;">[Error: El widget del captcha no se cargó]</p>
+                    <p style="color: #d9534f;">[Error: El widget del captcha no se cargó. Revisa las llaves en Railway]</p>
                 {% endif %}
             </div>
         </div>
@@ -58,6 +58,7 @@
             Siguiente Paso
         </button>
 
-        {{ form_end(formulario) }}
+        {# ESTO QUITA LOS CAMPOS EXTRAS (Correo, Teléfono, etc.) #}
+        {{ form_end(formulario, {'render_rest': false}) }}
     </div>
 {% endblock %}
