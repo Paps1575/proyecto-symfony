@@ -8,10 +8,9 @@
 {% block body %}
     <h1>Paso 1: Registro</h1>
 
-    {# ALERTAS DE ERROR DE VALIDACIÓN #}
     {% if not formulario.vars.valid %}
-        <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
-            <strong>¡Corrige los errores!</strong>
+        <div class="error-box">
+            <strong>Errores en el formulario:</strong>
             <ul>
                 {% for child in formulario.children %}
                     {% for error in child.vars.errors %}
@@ -22,19 +21,21 @@
         </div>
     {% endif %}
 
-    <div style="max-width: 500px; padding: 25px; background: white; border: 1px solid #ddd; border-radius: 8px;">
+    <div style="max-width: 500px; background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
         {{ form_start(formulario) }}
-        <div style="margin-bottom: 15px;">{{ form_row(formulario.nombre, {'attr': {'style': 'width:100%; padding:8px'}}) }}</div>
-        <div style="margin-bottom: 15px;">{{ form_row(formulario.email, {'attr': {'style': 'width:100%; padding:8px'}}) }}</div>
-        <div style="margin-bottom: 15px;">{{ form_row(formulario.telefono, {'attr': {'style': 'width:100%; padding:8px'}}) }}</div>
-        <div style="margin-bottom: 15px;">{{ form_row(formulario.password.first, {'attr': {'style': 'width:100%; padding:8px'}}) }}</div>
-        <div style="margin-bottom: 15px;">{{ form_row(formulario.password.second, {'attr': {'style': 'width:100%; padding:8px'}}) }}</div>
+        <div style="margin-bottom: 10px;">{{ form_row(formulario.nombre) }}</div>
+        <div style="margin-bottom: 10px;">{{ form_row(formulario.email) }}</div>
+        <div style="margin-bottom: 10px;">{{ form_row(formulario.telefono) }}</div>
+        <div style="margin-bottom: 10px;">{{ form_row(formulario.password.first) }}</div>
+        <div style="margin-bottom: 10px;">{{ form_row(formulario.password.second) }}</div>
 
         <div style="margin: 20px 0;">
             <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
         </div>
 
-        <button type="submit" style="width:100%; padding: 12px; background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold;">Siguiente Paso</button>
+        <button type="submit" style="width: 100%; padding: 12px; background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer;">
+            Validar y Continuar
+        </button>
         {{ form_end(formulario, {'render_rest': false}) }}
     </div>
 {% endblock %}

@@ -2,20 +2,25 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Proyecto Symfony{% endblock %}</title>
+    <title>{% block title %}Registro Symfony{% endblock %}</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .breadcrumb { display: flex; list-style: none; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px; }
+        .breadcrumb li { margin-right: 10px; }
+        .breadcrumb a { text-decoration: none; color: #007bff; }
+        .error-box { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; border: 1px solid #f5c6cb; margin-bottom: 20px; }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
-
+<body>
 {% if breadcrumbs is defined %}
-    <nav style="margin-bottom: 20px;">
-        <ol style="display: flex; list-style: none; padding: 10px; background: white; border: 1px solid #ddd; border-radius: 5px;">
+    <nav>
+        <ol class="breadcrumb">
             {% for crumb in breadcrumbs %}
-                <li style="margin-right: 10px;">
+                <li>
                     {% if not loop.last %}
-                        <a href="{{ crumb.url }}" style="text-decoration: none; color: #007bff;">{{ crumb.name }}</a>
-                        <span style="margin-left: 10px; color: #ccc;">/</span>
+                        <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
                     {% else %}
-                        <span style="color: #666;">{{ crumb.name }}</span>
+                        <strong>{{ crumb.name }}</strong>
                     {% endif %}
                 </li>
             {% endfor %}
