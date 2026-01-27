@@ -17,7 +17,6 @@ class AppController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        // Esto arregla el error de "No route found for GET /"
         return $this->render('home/index.html.twig', [
             'breadcrumbs' => [['name' => 'Inicio', 'url' => '#']]
         ]);
@@ -31,7 +30,6 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // TU SECRET KEY OFICIAL (Termina en uRz62)
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
@@ -71,7 +69,6 @@ class AppController extends AbstractController
     #[Route('/exito', name: 'app_exito')]
     public function exito(Request $request, EntityManagerInterface $em): Response
     {
-        // Esta ruta es la que faltaba y causaba el Error 500 en confirmar.html.twig
         $nombre = $request->getSession()->get('usuario_nombre', 'Anónimo');
 
         if ($request->isMethod('POST')) {
