@@ -17,15 +17,9 @@ class RegistroType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nombre', TextType::class, [
-                'label' => 'Nombre Completo',
-            ])
-            ->add('email', EmailType::class, [
-                'label' => 'Correo Electrónico',
-            ])
-            ->add('telefono', TelType::class, [
-                'label' => 'Teléfono (10 dígitos)',
-            ])
+            ->add('nombre', TextType::class, ['label' => 'Nombre Completo'])
+            ->add('email', EmailType::class, ['label' => 'Correo Electrónico'])
+            ->add('telefono', TelType::class, ['label' => 'Teléfono (10 dígitos)'])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Las contraseñas no coinciden.',
@@ -37,8 +31,6 @@ class RegistroType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => RegistroDatos::class,
-        ]);
+        $resolver->setDefaults(['data_class' => RegistroDatos::class]);
     }
 }
