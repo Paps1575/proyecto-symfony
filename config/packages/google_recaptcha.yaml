@@ -1,8 +1,10 @@
 services:
+    # Registramos la clase oficial de Google como un servicio
     ReCaptcha\ReCaptcha:
         arguments:
             $secret: '%env(RECAPTCHA_SECRET_KEY)%'
             $requestMethod: '@ReCaptcha\RequestMethod'
 
+    # Configuramos el método de envío (Curl)
     ReCaptcha\RequestMethod: '@ReCaptcha\RequestMethod\CurlPost'
     ReCaptcha\RequestMethod\CurlPost: null
