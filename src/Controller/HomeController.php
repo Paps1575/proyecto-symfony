@@ -13,7 +13,7 @@ class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig', [
             'breadcrumbs' => [
-                ['name' => 'Inicio', 'url' => '#']
+                ['name' => 'Inicio', 'url' => '#'],
             ],
         ]);
     }

@@ -8,9 +8,10 @@
 {% block body %}
     <h1>Paso 1: Registro</h1>
 
+    {# ALERTAS DE ERROR DE VALIDACIÓN #}
     {% if not formulario.vars.valid %}
         <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
-            <strong>¡Corrige los siguientes errores!</strong>
+            <strong>¡Corrige los errores!</strong>
             <ul>
                 {% for child in formulario.children %}
                     {% for error in child.vars.errors %}
@@ -20,10 +21,6 @@
             </ul>
         </div>
     {% endif %}
-
-    {% for message in app.flashes('error') %}
-        <div style="background: #dc3545; color: white; padding: 10px; margin-bottom: 15px;">{{ message }}</div>
-    {% endfor %}
 
     <div style="max-width: 500px; padding: 25px; background: white; border: 1px solid #ddd; border-radius: 8px;">
         {{ form_start(formulario) }}
@@ -37,9 +34,7 @@
             <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
         </div>
 
-        <button type="submit" style="width:100%; padding: 12px; background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold;">
-            Validar y Continuar
-        </button>
+        <button type="submit" style="width:100%; padding: 12px; background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold;">Siguiente Paso</button>
         {{ form_end(formulario, {'render_rest': false}) }}
     </div>
 {% endblock %}

@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Registro;
 use App\Form\RegistroType;
 use App\Model\RegistroDatos;
-use Doctrine\ORM\EntityManagerInterface;
 use ReCaptcha\ReCaptcha;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +20,7 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // LLAVE SECRETA OFICIAL: 6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62
+            // LLAVE SECRETA DE TU CAPTURA (uRz62)
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
@@ -31,6 +29,7 @@ class AppController extends AbstractController
 
             if ($resp->isSuccess()) {
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
+
                 return $this->redirectToRoute('app_confirmar');
             }
 
@@ -41,7 +40,7 @@ class AppController extends AbstractController
             'formulario' => $form->createView(),
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
-                ['name' => 'Registro', 'url' => '#']
+                ['name' => 'Registro', 'url' => '#'],
             ],
         ]);
     }
@@ -50,12 +49,13 @@ class AppController extends AbstractController
     public function confirmar(Request $request): Response
     {
         $nombre = $request->getSession()->get('usuario_nombre', 'Desconocido');
+
         return $this->render('app/confirmar.html.twig', [
             'nombre' => $nombre,
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
                 ['name' => 'Registro', 'url' => $this->generateUrl('app_registro')],
-                ['name' => 'Confirmar', 'url' => '#']
+                ['name' => 'Confirmar', 'url' => '#'],
             ],
         ]);
     }
