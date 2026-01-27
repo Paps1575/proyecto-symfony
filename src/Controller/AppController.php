@@ -6,6 +6,7 @@ use App\Entity\Registro;
 use App\Form\RegistroType;
 use App\Model\RegistroDatos;
 use Doctrine\ORM\EntityManagerInterface;
+use ReCaptcha\ReCaptcha;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,20 +22,21 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            if ($form->isValid()) {
+            // Validamos manualmente el reCAPTCHA con la librería de Google
+            $recaptcha = new ReCaptcha($this->getParameter('kernel.project_dir') ? $_ENV['RECAPTCHA_SECRET_KEY'] : '');
+            $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
+
+            if ($resp->isSuccess() && $form->isValid()) {
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
                 $this->addFlash('success', 'Validación correcta, gallo.');
-
                 return $this->redirectToRoute('app_confirmar');
             }
-            $this->addFlash('error', '¡Aguas! Revisa los errores del formulario.');
+
+            $this->addFlash('error', '¡Aguas! El captcha no es válido o faltan datos.');
         }
 
-        // Creamos la vista explícitamente aquí para evitar el error de NULL en Twig
-        $view = $form->createView();
-
         return $this->render('app/registro.html.twig', [
-            'formulario' => $view,
+            'formulario' => $form->createView(),
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => '/'],
                 ['name' => 'Registro', 'url' => '#'],

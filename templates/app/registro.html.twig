@@ -1,4 +1,3 @@
-{# templates/app/registro.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Paso 1: Registro{% endblock %}
@@ -45,12 +44,8 @@
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {% if formulario.captcha is defined and formulario.captcha is not null %}
-                    {{ form_widget(formulario.captcha) }}
-                    <div style="color: #d9534f;">{{ form_errors(formulario.captcha) }}</div>
-                {% else %}
-                    <p style="color: #d9534f;">[Error: El widget del captcha no se cargó. Revisa las llaves en Railway]</p>
-                {% endif %}
+                {# Inyectamos el widget oficial de Google usando tu Site Key de Railway #}
+                <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2xiAGWHbFeaJi_d1ggsLHIND"></div>
             </div>
         </div>
 
@@ -58,7 +53,7 @@
             Siguiente Paso
         </button>
 
-        {# ESTO QUITA LOS CAMPOS EXTRAS (Correo, Teléfono, etc.) #}
+        {# ESTO LIMPIA LOS CAMPOS EXTRAS DE LA ENTIDAD #}
         {{ form_end(formulario, {'render_rest': false}) }}
     </div>
 {% endblock %}
