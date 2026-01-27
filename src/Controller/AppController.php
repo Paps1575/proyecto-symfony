@@ -15,25 +15,27 @@ use Symfony\Component\Routing\Attribute\Route;
 class AppController extends AbstractController
 {
     #[Route('/registro', name: 'app_registro')]
-    public function registro(Request $request, ReCaptcha $reCaptcha): Response
+    public function registro(Request $request): Response
     {
         $datos = new RegistroDatos();
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // Obtenemos la respuesta del widget de Google
+            // HARDCODEO DE SECRET KEY (La que termina en Rz62)
+            $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
+            $recaptcha = new ReCaptcha($secret);
+
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
-            $resp = $reCaptcha->verify($gRecaptchaResponse, $request->getClientIp());
+            $resp = $recaptcha->verify($gRecaptchaResponse, $request->getClientIp());
 
             if ($resp->isSuccess() && $form->isValid()) {
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
                 return $this->redirectToRoute('app_confirmar');
             }
-            $this->addFlash('error', '¡Aguas! Por favor verifica el captcha de Google.');
+            $this->addFlash('error', '¡Aguas! Google dice que no pasaste el captcha.');
         }
 
-        // Siempre mandamos el FormView para evitar errores de renderizado
         return $this->render('app/registro.html.twig', [
             'formulario' => $form->createView(),
             'breadcrumbs' => [

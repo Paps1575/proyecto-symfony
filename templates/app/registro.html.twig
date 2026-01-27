@@ -8,20 +8,6 @@
 {% block body %}
     <h1>Paso 1: Registro</h1>
 
-    <nav aria-label="breadcrumb">
-        <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
-            {% for crumb in breadcrumbs %}
-                <li>
-                    {% if not loop.last %}
-                        <a href="{{ crumb.url }}">{{ crumb.name }}</a> <span>/</span>
-                    {% else %}
-                        <strong>{{ crumb.name }}</strong>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ol>
-    </nav>
-
     <hr>
 
     {% for message in app.flashes('error') %}
@@ -40,8 +26,8 @@
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {# Usamos la variable de entorno que ya tienes en Railway #}
-                <div class="g-recaptcha" data-sitekey="{{ app.request.server.get('RECAPTCHA_SITE_KEY') }}"></div>
+                {# HARDCODEO DE SITE KEY (La que termina en lND) #}
+                <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
             </div>
         </div>
 
