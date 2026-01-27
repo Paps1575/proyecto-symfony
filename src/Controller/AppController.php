@@ -13,9 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AppController extends AbstractController
 {
-    /**
-     * PASO 1: Pantalla de Registro con reCAPTCHA y Manejo de Errores.
-     */
     #[Route('/registro', name: 'app_registro')]
     public function registro(Request $request): Response
     {
@@ -25,19 +22,17 @@ class AppController extends AbstractController
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
-                // Si el reCAPTCHA es válido y no hay errores de validación
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
-
-                // Mensaje opcional para confirmar que pasó el filtro
                 $this->addFlash('success', 'Validación correcta, gallo.');
 
                 return $this->redirectToRoute('app_confirmar');
             }
-            // MANEJO DE ERRORES: Si algo falla (captcha o validación),
-            // Symfony inyecta los errores en la vista automáticamente.
+
+            // Si el captcha falla o hay errores, mandamos el flash
             $this->addFlash('error', '¡Aguas! Revisa los errores del formulario.');
         }
 
+        // IMPORTANTE: Aseguramos que siempre se pase el FormView
         return $this->render('app/registro.html.twig', [
             'formulario' => $form->createView(),
             'breadcrumbs' => [
@@ -47,9 +42,6 @@ class AppController extends AbstractController
         ]);
     }
 
-    /**
-     * PASO 2: Confirmación de Datos.
-     */
     #[Route('/confirmar', name: 'app_confirmar')]
     public function confirmar(Request $request): Response
     {
@@ -65,13 +57,9 @@ class AppController extends AbstractController
         ]);
     }
 
-    /**
-     * PASO 3: Éxito y Guardado Final en MySQL.
-     */
     #[Route('/exito', name: 'app_exito', methods: ['GET', 'POST'])]
     public function exito(Request $request, EntityManagerInterface $em): Response
     {
-        // Solo guardamos si se llega por POST desde la confirmación
         if ($request->isMethod('POST')) {
             $nombre = $request->getSession()->get('usuario_nombre', 'Anónimo');
 
@@ -83,9 +71,7 @@ class AppController extends AbstractController
                 $em->flush();
                 $this->addFlash('success', '¡Registro guardado con éxito en Railway!');
             } catch (\Exception $e) {
-                // Manejo de error si falla la conexión a la DB
-                $this->addFlash('error', 'Error al guardar: '.$e->getMessage());
-
+                $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');
             }
         }

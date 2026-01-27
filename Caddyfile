@@ -1,4 +1,6 @@
 :{$PORT}
 
 root * public/
-php_server
+php_server {
+    env DATABASE_URL {$DATABASE_URL}
+}
