@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Registro;
 use App\Form\RegistroType;
 use App\Model\RegistroDatos;
+use Doctrine\ORM\EntityManagerInterface;
 use ReCaptcha\ReCaptcha;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +17,7 @@ class AppController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
+        // Esto arregla el error de "No route found for GET /"
         return $this->render('home/index.html.twig', [
             'breadcrumbs' => [['name' => 'Inicio', 'url' => '#']]
         ]);
@@ -28,7 +31,7 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // TU SECRET KEY OFICIAL (uRz62)
+            // TU SECRET KEY OFICIAL (Termina en uRz62)
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
@@ -61,6 +64,30 @@ class AppController extends AbstractController
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
                 ['name' => 'Registro', 'url' => $this->generateUrl('app_registro')],
                 ['name' => 'Confirmar', 'url' => '#']
+            ]
+        ]);
+    }
+
+    #[Route('/exito', name: 'app_exito')]
+    public function exito(Request $request, EntityManagerInterface $em): Response
+    {
+        // Esta ruta es la que faltaba y causaba el Error 500 en confirmar.html.twig
+        $nombre = $request->getSession()->get('usuario_nombre', 'Anónimo');
+
+        if ($request->isMethod('POST')) {
+            $registro = new Registro();
+            $registro->setNombre($nombre);
+            $em->persist($registro);
+            $em->flush();
+            $this->addFlash('success', '¡Datos guardados con éxito!');
+        }
+
+        return $this->render('app/exito.html.twig', [
+            'nombre' => $nombre,
+            'breadcrumbs' => [
+                ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
+                ['name' => 'Confirmar', 'url' => $this->generateUrl('app_confirmar')],
+                ['name' => 'Éxito', 'url' => '#']
             ]
         ]);
     }
