@@ -7,7 +7,6 @@
 
 {% block body %}
     <h1>Paso 1: Registro</h1>
-
     <hr>
 
     {% for message in app.flashes('error') %}
@@ -26,8 +25,8 @@
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {# CLAVE DE SITIO COPIADA DE TU SITIO lND #}
-                <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
+                {# SITE KEY TERMINADA EN lND #}
+                <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2xiAGWHbFeaJi_d1ggsLHlND"></div>
             </div>
         </div>
 

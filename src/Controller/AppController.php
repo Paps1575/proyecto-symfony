@@ -22,13 +22,13 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // CLAVE SECRETA COPIADA DE TU CAPTURA image_905136.png
-            $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
+            // ESTA ES LA CLAVE SECRETA DE TU CAPTURA image_905136.png
+            $secret = '6LdJQlcsAAAAAJd68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
 
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
 
-            // Validamos solo con el token (sin IP para evitar líos con Railway)
+            // Verificamos sin IP para que Railway no haga panchos
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess() && $form->isValid()) {
@@ -36,6 +36,7 @@ class AppController extends AbstractController
                 return $this->redirectToRoute('app_confirmar');
             }
 
+            // Si sale esto, Google regresó false. Revisa que no haya espacios en la $secret.
             $this->addFlash('error', '¡Aguas! Google dice que no pasaste el captcha.');
         }
 
