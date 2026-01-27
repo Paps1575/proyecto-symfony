@@ -22,13 +22,13 @@ class AppController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // ESTA ES LA CLAVE SECRETA DE TU CAPTURA image_905136.png
-            $secret = '6LdJQlcsAAAAAJd68LES59fdLyxsThXkDPuRz62';
+            // LLAVE SECRETA QUE ME PASASTE
+            $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
 
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
 
-            // Verificamos sin IP para que Railway no haga panchos
+            // Verificación directa
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess() && $form->isValid()) {
@@ -36,8 +36,7 @@ class AppController extends AbstractController
                 return $this->redirectToRoute('app_confirmar');
             }
 
-            // Si sale esto, Google regresó false. Revisa que no haya espacios en la $secret.
-            $this->addFlash('error', '¡Aguas! Google dice que no pasaste el captcha.');
+            $this->addFlash('error', 'Google no validó el captcha con esa clave secreta.');
         }
 
         return $this->render('app/registro.html.twig', [
@@ -73,9 +72,9 @@ class AppController extends AbstractController
             try {
                 $em->persist($registro);
                 $em->flush();
-                $this->addFlash('success', '¡Registro guardado con éxito!');
+                $this->addFlash('success', '¡Registro exitoso!');
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
+                $this->addFlash('error', 'Error de BD: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');
             }
         }
