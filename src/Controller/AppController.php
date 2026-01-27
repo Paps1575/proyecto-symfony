@@ -27,14 +27,14 @@ class AppController extends AbstractController
 
                 return $this->redirectToRoute('app_confirmar');
             }
-
-            // Si el captcha falla o hay errores, mandamos el flash
             $this->addFlash('error', '¡Aguas! Revisa los errores del formulario.');
         }
 
-        // IMPORTANTE: Aseguramos que siempre se pase el FormView
+        // Creamos la vista explícitamente aquí para evitar el error de NULL en Twig
+        $view = $form->createView();
+
         return $this->render('app/registro.html.twig', [
-            'formulario' => $form->createView(),
+            'formulario' => $view,
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => '/'],
                 ['name' => 'Registro', 'url' => '#'],
@@ -69,7 +69,7 @@ class AppController extends AbstractController
             try {
                 $em->persist($registro);
                 $em->flush();
-                $this->addFlash('success', '¡Registro guardado con éxito en Railway!');
+                $this->addFlash('success', '¡Registro guardado con éxito!');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');

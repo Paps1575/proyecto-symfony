@@ -1,18 +1,15 @@
-{# templates/app/registro.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Paso 1: Registro{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {# Script necesario para que Google cargue el cuadro de "No soy un robot" #}
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 {% endblock %}
 
 {% block body %}
     <h1>Paso 1: Registro</h1>
 
-    {# Breadcrumbs para que el profe vea orden en la arquitectura #}
     <nav aria-label="breadcrumb">
         <ol style="display: flex; list-style: none; padding: 0; gap: 10px;">
             {% for crumb in breadcrumbs %}
@@ -29,33 +26,35 @@
 
     <hr>
 
-    {# Mostrar errores si el captcha falla #}
     {% for message in app.flashes('error') %}
         <div style="color: white; background-color: #d9534f; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
             {{ message }}
         </div>
     {% endfor %}
 
-    <div style="max-width: 450px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+    <div style="max-width: 450px; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
         {{ form_start(formulario) }}
 
-        {# Campo Nombre #}
         <div style="margin-bottom: 20px;">
             {{ form_label(formulario.nombre, 'Escribe tu nombre completo:') }}
             {{ form_widget(formulario.nombre, {'attr': {'style': 'width: 100%; padding: 10px; border: 1px solid #ccc;'}}) }}
-            <div style="color: #d9534f;">{{ form_errors(formulario.nombre) }}</div>
+            <div style="color: #d9534f; font-size: 0.9em;">{{ form_errors(formulario.nombre) }}</div>
         </div>
 
-        {# EL CAPTCHA SEPARADO: Aquí es donde aparece el cuadro de Google #}
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {{ form_widget(formulario.captcha) }}
+                {# SEGURO: Verificamos que el captcha exista para evitar el error 500 #}
+                {% if formulario.captcha is defined and formulario.captcha is not null %}
+                    {{ form_widget(formulario.captcha) }}
+                    <div style="color: #d9534f; font-size: 0.9em;">{{ form_errors(formulario.captcha) }}</div>
+                {% else %}
+                    <p style="color: #d9534f; font-weight: bold;">[Error: El widget del captcha no se cargó]</p>
+                {% endif %}
             </div>
-            <div style="color: #d9534f;">{{ form_errors(formulario.captcha) }}</div>
         </div>
 
-        <button type="submit" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
+        <button type="submit" style="background: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold;">
             Siguiente Paso
         </button>
 
