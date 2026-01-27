@@ -21,8 +21,8 @@ class AppController extends AbstractController
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            // LLAVE SECRETA QUE ME PASASTE (uRz62)
+        if ($form->isSubmitted() && $form->isValid()) {
+            // LLAVE SECRETA OFICIAL: 6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
@@ -30,20 +30,19 @@ class AppController extends AbstractController
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
             if ($resp->isSuccess()) {
-                // Sacamos el nombre directamente del POST para que no haya falla
-                $params = $request->request->all('registro');
-                $nombre = $params['nombre'] ?? 'Usuario';
-
-                $request->getSession()->set('usuario_nombre', $nombre);
+                $request->getSession()->set('usuario_nombre', $datos->nombre);
                 return $this->redirectToRoute('app_confirmar');
             }
 
-            $this->addFlash('error', 'Google rechazó el captcha. Intenta de nuevo.');
+            $this->addFlash('error', 'Google no validó el captcha. Intenta de nuevo.');
         }
 
         return $this->render('app/registro.html.twig', [
             'formulario' => $form->createView(),
-            'breadcrumbs' => [['name' => 'Inicio', 'url' => '/'], ['name' => 'Registro', 'url' => '#']],
+            'breadcrumbs' => [
+                ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
+                ['name' => 'Registro', 'url' => '#']
+            ],
         ]);
     }
 
@@ -54,35 +53,9 @@ class AppController extends AbstractController
         return $this->render('app/confirmar.html.twig', [
             'nombre' => $nombre,
             'breadcrumbs' => [
-                ['name' => 'Inicio', 'url' => '/'],
+                ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
                 ['name' => 'Registro', 'url' => $this->generateUrl('app_registro')],
-                ['name' => 'Confirmar', 'url' => '#'],
-            ],
-        ]);
-    }
-
-    #[Route('/exito', name: 'app_exito', methods: ['GET', 'POST'])]
-    public function exito(Request $request, EntityManagerInterface $em): Response
-    {
-        if ($request->isMethod('POST')) {
-            $nombre = $request->getSession()->get('usuario_nombre', 'Anónimo');
-            $registro = new Registro();
-            $registro->setNombre($nombre);
-            try {
-                $em->persist($registro);
-                $em->flush();
-                $this->addFlash('success', '¡Registro guardado en la base de datos!');
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
-                return $this->redirectToRoute('app_registro');
-            }
-        }
-        return $this->render('app/exito.html.twig', [
-            'breadcrumbs' => [
-                ['name' => 'Inicio', 'url' => '/'],
-                ['name' => 'Registro', 'url' => $this->generateUrl('app_registro')],
-                ['name' => 'Confirmar', 'url' => $this->generateUrl('app_confirmar')],
-                ['name' => 'Éxito', 'url' => '#'],
+                ['name' => 'Confirmar', 'url' => '#']
             ],
         ]);
     }

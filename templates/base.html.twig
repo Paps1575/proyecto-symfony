@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Proyecto Symfony{% endblock %}</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+{% if breadcrumbs is defined %}
+    <nav style="margin-bottom: 20px;">
+        <ol style="display: flex; list-style: none; padding: 10px; background: white; border: 1px solid #ddd; border-radius: 5px;">
+            {% for crumb in breadcrumbs %}
+                <li style="margin-right: 10px;">
+                    {% if not loop.last %}
+                        <a href="{{ crumb.url }}" style="text-decoration: none; color: #007bff;">{{ crumb.name }}</a>
+                        <span style="margin-left: 10px; color: #ccc;">/</span>
+                    {% else %}
+                        <span style="color: #666;">{{ crumb.name }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </nav>
+{% endif %}
+
+{% block body %}{% endblock %}
+{% block javascripts %}{% endblock %}
+</body>
 </html>
