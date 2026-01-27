@@ -6,7 +6,7 @@ use App\Entity\Registro;
 use App\Form\RegistroType;
 use App\Model\RegistroDatos;
 use Doctrine\ORM\EntityManagerInterface;
-use ReCaptcha\ReCaptcha;
+use ReCaptcha\ReCaptcha; // Librería oficial de Google
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,25 +14,33 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AppController extends AbstractController
 {
+    /**
+     * PASO 1: Registro con validación manual de reCAPTCHA v2.
+     */
     #[Route('/registro', name: 'app_registro')]
-    public function registro(Request $request): Response
+    public function registro(Request $request, ReCaptcha $reCaptcha): Response
     {
         $datos = new RegistroDatos();
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            // Validamos manualmente el reCAPTCHA con la librería de Google
-            $recaptcha = new ReCaptcha($this->getParameter('kernel.project_dir') ? $_ENV['RECAPTCHA_SECRET_KEY'] : '');
-            $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
+            // Obtenemos la respuesta del widget de Google desde el request POST
+            $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
+
+            // Verificamos con Google usando tu Secret Key de Railway y la IP del cliente
+            $resp = $reCaptcha->verify($gRecaptchaResponse, $request->getClientIp());
 
             if ($resp->isSuccess() && $form->isValid()) {
+                // Si el captcha es real y el formulario es válido, guardamos nombre en sesión
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
-                $this->addFlash('success', 'Validación correcta, gallo.');
+                $this->addFlash('success', 'Validación de seguridad correcta.');
+
                 return $this->redirectToRoute('app_confirmar');
             }
 
-            $this->addFlash('error', '¡Aguas! El captcha no es válido o faltan datos.');
+            // Si el captcha falla, mandamos el error
+            $this->addFlash('error', '¡Aguas! Por favor verifica que no eres un robot.');
         }
 
         return $this->render('app/registro.html.twig', [
@@ -44,6 +52,9 @@ class AppController extends AbstractController
         ]);
     }
 
+    /**
+     * PASO 2: Confirmación de los datos guardados en la sesión.
+     */
     #[Route('/confirmar', name: 'app_confirmar')]
     public function confirmar(Request $request): Response
     {
@@ -59,9 +70,13 @@ class AppController extends AbstractController
         ]);
     }
 
+    /**
+     * PASO 3: Guardado final en la base de datos MySQL de Railway.
+     */
     #[Route('/exito', name: 'app_exito', methods: ['GET', 'POST'])]
     public function exito(Request $request, EntityManagerInterface $em): Response
     {
+        // Solo guardamos si el usuario confirmó mediante el botón (POST)
         if ($request->isMethod('POST')) {
             $nombre = $request->getSession()->get('usuario_nombre', 'Anónimo');
 
@@ -70,10 +85,10 @@ class AppController extends AbstractController
 
             try {
                 $em->persist($registro);
-                $em->flush();
-                $this->addFlash('success', '¡Registro guardado con éxito!');
+                $em->flush(); // Aquí se hace el INSERT real en Railway
+                $this->addFlash('success', '¡Registro completado con éxito!');
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Error al guardar: ' . $e->getMessage());
+                $this->addFlash('error', 'Error de conexión: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');
             }
         }
