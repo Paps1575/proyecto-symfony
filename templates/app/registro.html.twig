@@ -19,18 +19,18 @@
         {{ form_start(formulario) }}
         <div style="margin-bottom: 20px;">
             {{ form_label(formulario.nombre, 'Escribe tu nombre completo:') }}
-            {{ form_widget(formulario.nombre, {'attr': {'class': 'form-control', 'style': 'width:100%'}}) }}
+            {{ form_widget(formulario.nombre, {'attr': {'style': 'width:100%; padding: 8px;'}}) }}
         </div>
 
         <div style="margin-bottom: 20px;">
             <label>Verificación de seguridad:</label>
             <div style="margin-top: 10px;">
-                {# SITE KEY QUE ME PASASTE #}
+                {# TU LLAVE DE SITIO QUE TERMINA EN LHlND #}
                 <div class="g-recaptcha" data-sitekey="6LdJQlcsAAAAAHng2XiAGWHbFeaJi_d1ggsLHlND"></div>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
+        <button type="submit" style="width: 100%; padding: 12px; background: #007bff; color: white; border: none; font-weight: bold; cursor: pointer;">
             Siguiente Paso
         </button>
         {{ form_end(formulario, {'render_rest': false}) }}

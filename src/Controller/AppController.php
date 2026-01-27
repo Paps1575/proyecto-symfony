@@ -21,22 +21,23 @@ class AppController extends AbstractController
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            // LLAVES QUE ME PASASTE (Hardcodeadas para que no haya duda)
+        if ($form->isSubmitted() && $form->isValid()) {
+            // LLAVE SECRETA DE TU CAPTURA
             $secret = '6LdJQlcsAAAAAAjD68LES59fdLyxsThXkDPuRz62';
             $recaptcha = new ReCaptcha($secret);
 
+            // Google manda el token en este campo específico
             $gRecaptchaResponse = $request->request->get('g-recaptcha-response');
 
-            // Verificación directa
+            // Verificamos directamente con Google
             $resp = $recaptcha->verify($gRecaptchaResponse);
 
-            if ($resp->isSuccess() && $form->isValid()) {
+            if ($resp->isSuccess()) {
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
                 return $this->redirectToRoute('app_confirmar');
             }
 
-            // Si falla, imprimimos los errores de Google en el flash para saber QUÉ PASÓ
+            // Si falla, mostramos el código de error real de Google
             $errorCodes = implode(', ', $resp->getErrorCodes());
             $this->addFlash('error', 'Google rechazó el captcha. Error: ' . $errorCodes);
         }
@@ -74,7 +75,7 @@ class AppController extends AbstractController
             try {
                 $em->persist($registro);
                 $em->flush();
-                $this->addFlash('success', '¡Registro exitoso!');
+                $this->addFlash('success', '¡Registro exitoso en Railway!');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error de BD: ' . $e->getMessage());
                 return $this->redirectToRoute('app_registro');
