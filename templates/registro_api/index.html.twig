@@ -180,19 +180,17 @@
                     body: JSON.stringify(datos)
                 });
 
-                const res = await response.json();
-
                 if (response.ok) {
                     alert("¡Guardado exitoso!");
                     regresarATabla();
                     cargarPersonas();
                 } else {
-                    alert("Error del servidor: " + (res.error || "No se pudo guardar"));
+                    const res = await response.json();
+                    alert("Error: " + (res.error || "No se pudo guardar"));
                     validarFormulario();
                 }
             } catch (err) {
-                console.error("Error de red:", err);
-                alert("Error de conexión. Verifica que el servidor de Railway esté activo.");
+                alert("Error de conexión. Revisa los logs de Railway.");
                 validarFormulario();
             } finally {
                 btnGuardar.innerText = "Guardar Datos";
@@ -202,11 +200,8 @@
         // --- ELIMINAR (DELETE) ---
         async function eliminar(id) {
             if (!confirm("¿Deseas eliminar este registro?")) return;
-            try {
-                const response = await fetch(`/api/personas/${id}`, { method: 'DELETE' });
-                if (response.ok) cargarPersonas();
-                else alert("Error al eliminar");
-            } catch (e) { console.error("Error de red al eliminar:", e); }
+            const response = await fetch(`/api/personas/${id}`, { method: 'DELETE' });
+            if (response.ok) cargarPersonas();
         }
 
         function actualizarPaginador(total, actual) {
