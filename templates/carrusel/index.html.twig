@@ -1,17 +1,18 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
     <div style="max-width: 800px; margin: 50px auto; text-align: center; font-family: sans-serif;">
-        <h2 style="font-weight: 800; color: #333;">Carrusel de Outfits</h2>
+        <h2 style="font-weight: 800; color: #333;">Carrusel de Deidades</h2>
 
         <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 40px;">
             <form action="{{ path('app_carrusel_subir') }}" method="post" enctype="multipart/form-data" style="display: flex; gap: 10px; justify-content: center;">
-                <input type="file" name="imagen" required style="padding: 10px; border: 1px dashed #ccc; border-radius: 8px;">
-                <button type="submit" style="background: #007bff; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">Subir Outfit</button>
+                <input type="file" name="imagen" required>
+                <button type="submit" style="background: #007bff; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold;">Subir Foto</button>
             </form>
         </div>
 
         {% if imagenes is empty %}
-            <p style="color: #999;">Aún no hay fotos. ¡Sube la primera!</p>
+            <p style="color: #999;">No hay fotos todavía.</p>
         {% else %}
             <div style="display: flex; overflow-x: auto; gap: 15px; padding: 20px; background: #eee; border-radius: 20px;">
                 {% for img in imagenes %}
@@ -20,8 +21,6 @@
             </div>
         {% endif %}
 
-        <div style="margin-top: 30px;">
-            <a href="{{ path('app_home') }}" style="color: #666; text-decoration: none; font-weight: bold;">← Volver al Inicio</a>
-        </div>
+        <div style="margin-top: 30px;"><a href="{{ path('app_home') }}">← Inicio</a></div>
     </div>
 {% endblock %}

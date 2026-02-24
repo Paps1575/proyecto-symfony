@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity] // <-- Quitamos el (repositoryClass: ...) porque no lo tienes creado
+#[ORM\Entity] // <-- Así, sin paréntesis ni clases extra
 class ImagenCarrusel
 {
     #[ORM\Id]
