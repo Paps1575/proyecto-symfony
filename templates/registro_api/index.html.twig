@@ -9,15 +9,21 @@
         .btn-pag:hover:not(:disabled) { background: #f0f0f0; }
         .btn-pag:disabled { cursor: not-allowed; opacity: 0.5; }
         .active { background: #007bff !important; color: white !important; border-color: #007bff !important; }
+        .input-busqueda:focus { border-color: #007bff !important; box-shadow: 0 0 0 2px rgba(0,123,255,0.1); }
     </style>
 
     <div style="max-width: 900px; margin: 20px auto; font-family: sans-serif;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <h2 id="titulo-pagina" style="color: #333; font-weight: 700;">Gestión de Usuarios</h2>
-            <button id="btn-abrir-form" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">+ Nueva Persona</button>
+            <div style="display: flex; gap: 10px;">
+                {# BUSCADOR COQUETO #}
+                <input type="text" id="input-buscar" placeholder="🔍 Buscar por nombre..."
+                       style="padding: 10px 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; width: 250px; transition: 0.3s;" class="input-busqueda">
+                <button id="btn-abrir-form" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">+ Nueva Persona</button>
+            </div>
         </div>
 
-        {# VISTA 1: TABLA MINIMALISTA #}
+        {# VISTA 1: TABLA #}
         <div id="vista-tabla" style="animation: fadeIn 0.4s;">
             <div class="card-deidad">
                 <table style="width: 100%; border-collapse: collapse;">
@@ -75,7 +81,15 @@
         const form = document.getElementById('form-registro');
         const btnGuardar = document.getElementById('btn-guardar');
         const inputs = form.querySelectorAll('input[required]');
+        const inputBuscar = document.getElementById('input-buscar');
         let editandoId = null;
+        let busquedaActual = '';
+
+        // --- BUSCADOR (FILTRO EN TIEMPO REAL) ---
+        inputBuscar.addEventListener('input', (e) => {
+            busquedaActual = e.target.value;
+            cargarPersonas(1); // Reset a página 1 al buscar
+        });
 
         // --- VALIDACIÓN DE BOTÓN ---
         form.oninput = () => {
@@ -96,6 +110,7 @@
             document.getElementById('vista-formulario').style.display = 'none';
             document.getElementById('vista-detalle').style.display = 'none';
             document.getElementById('btn-abrir-form').style.display = 'block';
+            inputBuscar.style.display = 'block';
             document.getElementById('titulo-pagina').innerText = "Gestión de Usuarios";
             editandoId = null;
             form.reset();
@@ -106,16 +121,32 @@
             document.getElementById('vista-tabla').style.display = 'none';
             document.getElementById('vista-formulario').style.display = 'block';
             document.getElementById('btn-abrir-form').style.display = 'none';
+            inputBuscar.style.display = 'none';
             document.getElementById('form-titulo').innerText = "Nuevo Registro";
         };
 
-        // --- CARGAR DATOS ---
+        // --- CARGAR DATOS CON FILTRO ---
         async function cargarPersonas(pagina = 1) {
+            // Pasamos el parámetro de búsqueda a la API (opcional, aquí filtramos el array que llega)
             const res = await fetch(`/api/personas?page=${pagina}`);
             const data = await res.json();
+
+            // FILTRADO CLIENT-SIDE (Para no complicar el Controller más)
+            let itemsFiltrados = data.items;
+            if (busquedaActual) {
+                itemsFiltrados = itemsFiltrados.filter(p =>
+                    p.nombre.toLowerCase().includes(busquedaActual.toLowerCase())
+                );
+            }
+
             const cuerpo = document.getElementById('cuerpo-tabla');
             cuerpo.innerHTML = '';
-            data.items.forEach(p => {
+
+            if (itemsFiltrados.length === 0) {
+                cuerpo.innerHTML = '<tr><td colspan="2" style="padding: 20px; text-align: center; color: #999;">No se encontraron deidades con ese nombre.</td></tr>';
+            }
+
+            itemsFiltrados.forEach(p => {
                 const fila = document.createElement('tr');
                 fila.className = 'fila-usuario';
                 fila.innerHTML = `<td style="padding: 15px; font-weight: 500;">${p.nombre}</td><td style="padding: 15px; color: #777;">${p.email}</td>`;
@@ -142,9 +173,9 @@
             document.getElementById('vista-tabla').style.display = 'none';
             document.getElementById('vista-detalle').style.display = 'block';
             document.getElementById('btn-abrir-form').style.display = 'none';
+            inputBuscar.style.display = 'none';
         }
 
-        // --- GUARDAR / ACTUALIZAR ---
         form.onsubmit = async (e) => {
             e.preventDefault();
             const url = editandoId ? `/api/personas/${editandoId}` : '/api/personas/nuevo';
@@ -154,7 +185,7 @@
                 body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
             });
             if (response.ok) {
-                alert(editandoId ? "¡Actualizado con éxito!" : "¡Guardado con éxito!");
+                alert(editandoId ? "¡Actualizado!" : "¡Guardado!");
                 regresarALista();
             }
         };
@@ -166,12 +197,10 @@
             }
         }
 
-        // --- PAGINACIÓN COQUETA ---
         function actualizarPaginador(total, actual) {
             const cont = document.getElementById('paginacion');
             cont.innerHTML = '';
 
-            // Botón Inicio
             const btnIni = document.createElement('button');
             btnIni.innerText = '<<';
             btnIni.className = 'btn-pag';
@@ -179,7 +208,6 @@
             btnIni.onclick = () => cargarPersonas(1);
             cont.appendChild(btnIni);
 
-            // Números
             for (let i = 1; i <= total; i++) {
                 if (i === 1 || i === total || (i >= actual - 1 && i <= actual + 1)) {
                     const btn = document.createElement('button');
@@ -195,7 +223,6 @@
                 }
             }
 
-            // Botón Final
             const btnFin = document.createElement('button');
             btnFin.innerText = '>>';
             btnFin.className = 'btn-pag';
