@@ -3,9 +3,12 @@
 {% block body %}
     <style>
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-deidad { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
         tr.fila-usuario:hover { background-color: #f8f9fa; cursor: pointer; transition: 0.2s; }
-        .card-deidad { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        input.invalid { border-color: #dc3545 !important; background-color: #fff8f8; }
+        .btn-pag { padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: bold; background: white; transition: 0.2s; }
+        .btn-pag:hover:not(:disabled) { background: #f0f0f0; }
+        .btn-pag:disabled { cursor: not-allowed; opacity: 0.5; }
+        .active { background: #007bff !important; color: white !important; border-color: #007bff !important; }
     </style>
 
     <div style="max-width: 900px; margin: 20px auto; font-family: sans-serif;">
@@ -14,17 +17,17 @@
             <button id="btn-abrir-form" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">+ Nueva Persona</button>
         </div>
 
-        {# VISTA 1: TABLA #}
+        {# VISTA 1: TABLA MINIMALISTA #}
         <div id="vista-tabla" style="animation: fadeIn 0.4s;">
             <div class="card-deidad">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
-                    <tr style="border-bottom: 2px solid #f8f9fa; text-align: left; color: #999; font-size: 11px; letter-spacing: 1px;">
-                        <th style="padding: 15px;">NOMBRE COMPLETO</th>
-                        <th style="padding: 15px;">CORREO ELECTRÓNICO</th>
+                    <tr style="border-bottom: 2px solid #f8f9fa; text-align: left; color: #999; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+                        <th style="padding: 15px;">Nombre Completo</th>
+                        <th style="padding: 15px;">Correo Electrónico</th>
                     </tr>
                     </thead>
-                    <tbody id="cuerpo-tabla"></tbody>
+                    <tbody id="cuerpo-tabla" style="color: #555; font-size: 14px;"></tbody>
                 </table>
                 <div id="paginacion" style="display: flex; gap: 8px; justify-content: center; margin-top: 25px;"></div>
             </div>
@@ -37,31 +40,32 @@
                 <form id="form-registro" novalidate>
                     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                         <div style="flex: 1;">
-                            <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: bold;">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 13px;">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none;">
                         </div>
                         <div style="flex: 1;">
-                            <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: bold;">Email:</label>
-                            <input type="email" id="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 13px;">Email:</label>
+                            <input type="email" id="email" name="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none;">
                         </div>
                     </div>
                     <div style="display: flex; gap: 12px; margin-top: 30px;">
-                        <button type="submit" id="btn-guardar" disabled style="background: #ccc; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold;">Guardar</button>
-                        <button type="button" onclick="regresarALista()" style="background: #f8f9fa; border: 1px solid #ddd; padding: 12px 30px; border-radius: 8px;">Cancelar</button>
+                        <button type="submit" id="btn-guardar" disabled style="background: #ccc; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: not-allowed;">Guardar</button>
+                        <button type="button" onclick="regresarALista()" style="background: #f8f9fa; border: 1px solid #ddd; padding: 12px 30px; border-radius: 8px; cursor: pointer;">Cancelar</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        {# VISTA 3: DETALLE #}
+        {# VISTA 3: DETALLE DEL USUARIO #}
         <div id="vista-detalle" style="display: none; animation: fadeIn 0.4s;">
-            <div class="card-deidad" style="text-align: center;">
-                <h3 id="det-nombre" style="font-size: 24px; margin-bottom: 10px;"></h3>
-                <p id="det-email" style="color: #007bff; margin-bottom: 30px;"></p>
-                <div style="display: flex; justify-content: center; gap: 15px;">
-                    <button id="btn-edit-link" style="background: #333; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer;">Editar</button>
-                    <button id="btn-delete-link" style="background: white; color: #dc3545; border: 1px solid #dc3545; padding: 10px 25px; border-radius: 8px; cursor: pointer;">Eliminar</button>
-                    <button onclick="regresarALista()" style="background: #f8f9fa; border: 1px solid #ddd; padding: 10px 25px; border-radius: 8px;">Volver</button>
+            <div class="card-deidad" style="text-align: center; padding: 40px;">
+                <div style="width: 60px; height: 60px; background: #e9ecef; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #adb5bd;">👤</div>
+                <h3 id="det-nombre" style="font-size: 24px; margin: 0;"></h3>
+                <p id="det-email" style="color: #007bff; margin: 10px 0; font-size: 16px;"></p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 25px;">
+                    <button id="btn-edit-link" style="background: #333; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold;">Editar</button>
+                    <button id="btn-delete-link" style="background: white; color: #dc3545; border: 1px solid #dc3545; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold;">Eliminar</button>
+                    <button onclick="regresarALista()" style="background: #f8f9fa; border: 1px solid #ddd; padding: 10px 25px; border-radius: 8px; cursor: pointer;">Volver</button>
                 </div>
             </div>
         </div>
@@ -74,18 +78,17 @@
         let editandoId = null;
 
         // --- VALIDACIÓN DE BOTÓN ---
-        function validar() {
-            let ok = true;
+        form.oninput = () => {
+            let esValido = true;
             const regexNombre = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
             inputs.forEach(i => {
-                if (!i.value.trim()) ok = false;
-                if (i.id === 'nombre' && !regexNombre.test(i.value)) ok = false;
+                if (!i.value.trim()) esValido = false;
+                if (i.id === 'nombre' && !regexNombre.test(i.value)) esValido = false;
             });
-            btnGuardar.disabled = !ok;
-            btnGuardar.style.background = ok ? '#28a745' : '#ccc';
-            btnGuardar.style.cursor = ok ? 'pointer' : 'not-allowed';
-        }
-        inputs.forEach(i => i.addEventListener('input', validar));
+            btnGuardar.disabled = !esValido;
+            btnGuardar.style.background = esValido ? '#28a745' : '#ccc';
+            btnGuardar.style.cursor = esValido ? 'pointer' : 'not-allowed';
+        };
 
         // --- NAVEGACIÓN ---
         function regresarALista() {
@@ -93,6 +96,7 @@
             document.getElementById('vista-formulario').style.display = 'none';
             document.getElementById('vista-detalle').style.display = 'none';
             document.getElementById('btn-abrir-form').style.display = 'block';
+            document.getElementById('titulo-pagina').innerText = "Gestión de Usuarios";
             editandoId = null;
             form.reset();
             cargarPersonas();
@@ -114,7 +118,7 @@
             data.items.forEach(p => {
                 const fila = document.createElement('tr');
                 fila.className = 'fila-usuario';
-                fila.innerHTML = `<td style="padding: 15px;">${p.nombre}</td><td style="padding: 15px; color: #777;">${p.email}</td>`;
+                fila.innerHTML = `<td style="padding: 15px; font-weight: 500;">${p.nombre}</td><td style="padding: 15px; color: #777;">${p.email}</td>`;
                 fila.onclick = () => verDetalle(p.id);
                 cuerpo.appendChild(fila);
             });
@@ -127,22 +131,20 @@
             document.getElementById('det-nombre').innerText = p.nombre;
             document.getElementById('det-email').innerText = p.email;
             document.getElementById('btn-delete-link').onclick = () => eliminar(id);
-            document.getElementById('btn-edit-link').onclick = () => prepararEdicion(p);
+            document.getElementById('btn-edit-link').onclick = () => {
+                editandoId = p.id;
+                document.getElementById('nombre').value = p.nombre;
+                document.getElementById('email').value = p.email;
+                document.getElementById('vista-detalle').style.display = 'none';
+                document.getElementById('vista-formulario').style.display = 'block';
+                document.getElementById('form-titulo').innerText = "Editar Perfil";
+            };
             document.getElementById('vista-tabla').style.display = 'none';
             document.getElementById('vista-detalle').style.display = 'block';
             document.getElementById('btn-abrir-form').style.display = 'none';
         }
 
-        function prepararEdicion(p) {
-            editandoId = p.id;
-            document.getElementById('nombre').value = p.nombre;
-            document.getElementById('email').value = p.email;
-            document.getElementById('vista-detalle').style.display = 'none';
-            document.getElementById('vista-formulario').style.display = 'block';
-            document.getElementById('form-titulo').innerText = "Editar Perfil";
-            validar();
-        }
-
+        // --- GUARDAR / ACTUALIZAR ---
         form.onsubmit = async (e) => {
             e.preventDefault();
             const url = editandoId ? `/api/personas/${editandoId}` : '/api/personas/nuevo';
@@ -152,28 +154,54 @@
                 body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
             });
             if (response.ok) {
-                alert("¡Listo, papu!");
+                alert(editandoId ? "¡Actualizado con éxito!" : "¡Guardado con éxito!");
                 regresarALista();
             }
         };
 
         async function eliminar(id) {
-            if (confirm("¿Borrar deidad?")) {
+            if (confirm("¿Borrar definitivamente?")) {
                 await fetch(`/api/personas/${id}`, { method: 'DELETE' });
                 regresarALista();
             }
         }
 
+        // --- PAGINACIÓN COQUETA ---
         function actualizarPaginador(total, actual) {
             const cont = document.getElementById('paginacion');
             cont.innerHTML = '';
+
+            // Botón Inicio
+            const btnIni = document.createElement('button');
+            btnIni.innerText = '<<';
+            btnIni.className = 'btn-pag';
+            btnIni.disabled = (actual === 1);
+            btnIni.onclick = () => cargarPersonas(1);
+            cont.appendChild(btnIni);
+
+            // Números
             for (let i = 1; i <= total; i++) {
-                const btn = document.createElement('button');
-                btn.innerText = i;
-                btn.style.cssText = `padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: ${i === actual ? '#007bff' : 'white'}; color: ${i === actual ? 'white' : '#555'}; cursor: pointer;`;
-                btn.onclick = () => cargarPersonas(i);
-                cont.appendChild(btn);
+                if (i === 1 || i === total || (i >= actual - 1 && i <= actual + 1)) {
+                    const btn = document.createElement('button');
+                    btn.innerText = i;
+                    btn.className = `btn-pag ${i === actual ? 'active' : ''}`;
+                    btn.onclick = () => cargarPersonas(i);
+                    cont.appendChild(btn);
+                } else if (i === actual - 2 || i === actual + 2) {
+                    const dots = document.createElement('span');
+                    dots.innerText = '...';
+                    dots.style.padding = '8px';
+                    cont.appendChild(dots);
+                }
             }
+
+            // Botón Final
+            const btnFin = document.createElement('button');
+            btnFin.innerText = '>>';
+            btnFin.className = 'btn-pag';
+            btnFin.disabled = (actual === total);
+            btnFin.onclick = () => cargarPersonas(total);
+            cont.appendChild(btnFin);
         }
 
         cargarPersonas();
