@@ -24,7 +24,7 @@ class HomeController extends AbstractController
         return $this->render('registro_api/index.html.twig', [
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
-                ['name' => 'CRUD API', 'url' => '#']
+                ['name' => 'CRUD API', 'url' => '#'],
             ],
         ]);
     }
