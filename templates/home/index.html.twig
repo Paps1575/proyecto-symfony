@@ -1,16 +1,23 @@
-<div class="container-botones" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-    {# BOTÓN VERDE: Registro #}
-    <a href="{{ path('app_registro_api') }}?nuevo=true" class="btn-inicio btn-registro">
-        📝 Registrar Persona
-    </a>
+{% extends 'base.html.twig' %}
+{% block body %}
+    <style>
+        .hero { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: sans-serif; background: #f9f9f9; }
+        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
+        .btn-custom { padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-custom:hover { transform: translateY(-3px); }
+        .green { background: #28a745; }
+        .blue { background: #007bff; }
+        .purple { background: #6f42c1; }
+    </style>
 
-    {# BOTÓN AZUL: CRUD #}
-    <a href="{{ path('app_registro_api') }}" class="btn-inicio btn-crud">
-        📊 Ver Tabla CRUD
-    </a>
+    <div class="hero">
+        <h1 style="font-size: 4rem; color: #333; font-weight: 800;">OutfitFlow</h1>
+        <p style="color: #666; font-size: 1.2rem;">Arquitectura de Software para Deidades</p>
 
-    {# BOTÓN MORADO: Carrusel #}
-    <a href="{{ path('app_carrusel') }}" class="btn-inicio" style="background: linear-gradient(135deg, #6f42c1 0%, #4527a0 100%); color: white;">
-        📸 Ver Carrusel
-    </a>
-</div>
+        <div class="btn-group">
+            <a href="{{ path('app_registro_api') }}?nuevo=true" class="btn-custom green">📝 Registrar</a>
+            <a href="{{ path('app_registro_api') }}" class="btn-custom blue">📊 Ver CRUD</a>
+            <a href="{{ path('app_carrusel_view') }}" class="btn-custom purple">📸 Carrusel</a>
+        </div>
+    </div>
+{% endblock %}
