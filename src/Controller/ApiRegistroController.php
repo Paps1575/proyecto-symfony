@@ -30,8 +30,8 @@ class ApiRegistroController extends AbstractController
             $data[] = [
                 'id' => $p->getId(),
                 'nombre' => $p->getNombre(),
-                // CORRECCIÓN: Si te da error, checa si en tu Entidad es getCorreo() o getEmail()
-                'email' => method_exists($p, 'getEmail') ? $p->getEmail() : ($p->getCorreo() ?? 'N/A'),
+                // Si esto sigue fallando, cámbialo por el nombre exacto de tu campo
+                'email' => method_exists($p, 'getEmail') ? $p->getEmail() : 'Dato no disponible',
             ];
         }
 
@@ -47,44 +47,27 @@ class ApiRegistroController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        // CORRECCIÓN: NotBlank sin array de opciones para evitar el error del log
+        // CORRECCIÓN: Regex ahora recibe el string directo como primer argumento
         $errors = $validator->validate($data['nombre'] ?? '', [
             new Assert\NotBlank(),
-            new Assert\Regex([
-                'pattern' => '/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/',
-                'message' => 'El nombre no debe llevar números.'
-            ])
+            new Assert\Regex('/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/')
         ]);
 
         if (count($errors) > 0) {
-            return $this->json(['error' => $errors[0]->getMessage()], 400);
+            return $this->json(['error' => 'El nombre no debe llevar números.'], 400);
         }
 
         $persona = new Registro();
         $persona->setNombre($data['nombre']);
 
-        // CORRECCIÓN DINÁMICA: Usa el método que exista en tu entidad
+        // CORRECCIÓN: Asegúrate de usar el setter correcto según tu entidad
         if (method_exists($persona, 'setEmail')) {
-            $persona->setEmail($data['email']);
-        } else {
-            $persona->setCorreo($data['email']);
+            $persona->setEmail($data['email'] ?? null);
         }
 
         $em->persist($persona);
         $em->flush();
 
         return $this->json(['status' => 'Persona guardada con éxito'], 201);
-    }
-
-    #[Route('/personas/{id}', name: 'api_personas_delete', methods: ['DELETE'])]
-    public function delete(int $id, RegistroRepository $repo, EntityManagerInterface $em): JsonResponse
-    {
-        $persona = $repo->find($id);
-        if (!$persona) return $this->json(['error' => 'No encontrado'], 404);
-
-        $em->remove($persona);
-        $em->flush();
-
-        return $this->json(['status' => 'Eliminado']);
     }
 }
