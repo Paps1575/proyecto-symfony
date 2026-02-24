@@ -33,7 +33,6 @@ class CarruselController extends AbstractController
             $em->persist($img);
             $em->flush();
         }
-
         return $this->redirectToRoute('app_carrusel');
     }
 }
