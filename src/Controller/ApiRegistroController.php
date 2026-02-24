@@ -9,8 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[Route('/api')]
 class ApiRegistroController extends AbstractController
@@ -30,8 +28,8 @@ class ApiRegistroController extends AbstractController
             $data[] = [
                 'id' => $p->getId(),
                 'nombre' => $p->getNombre(),
-                // Si esto sigue fallando, cámbialo por el nombre exacto de tu campo
-                'email' => method_exists($p, 'getEmail') ? $p->getEmail() : 'Dato no disponible',
+                // CORRECCIÓN: Usamos getCorreo() que es el estándar que parece tener tu entidad
+                'email' => method_exists($p, 'getCorreo') ? $p->getCorreo() : 'N/A',
             ];
         }
 
@@ -42,32 +40,22 @@ class ApiRegistroController extends AbstractController
         ]);
     }
 
-    #[Route('/personas/nuevo', name: 'api_personas_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
+    #[Route('/personas/{id}', name: 'api_personas_single', methods: ['GET'])]
+    public function getOne(Registro $persona): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        // CORRECCIÓN: Regex ahora recibe el string directo como primer argumento
-        $errors = $validator->validate($data['nombre'] ?? '', [
-            new Assert\NotBlank(),
-            new Assert\Regex('/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/')
+        return $this->json([
+            'id' => $persona->getId(),
+            'nombre' => $persona->getNombre(),
+            'email' => method_exists($persona, 'getCorreo') ? $persona->getCorreo() : 'N/A',
+            'telefono' => method_exists($persona, 'getTelefono') ? $persona->getTelefono() : 'N/A',
         ]);
+    }
 
-        if (count($errors) > 0) {
-            return $this->json(['error' => 'El nombre no debe llevar números.'], 400);
-        }
-
-        $persona = new Registro();
-        $persona->setNombre($data['nombre']);
-
-        // CORRECCIÓN: Asegúrate de usar el setter correcto según tu entidad
-        if (method_exists($persona, 'setEmail')) {
-            $persona->setEmail($data['email'] ?? null);
-        }
-
-        $em->persist($persona);
+    #[Route('/personas/{id}', name: 'api_personas_delete', methods: ['DELETE'])]
+    public function delete(Registro $persona, EntityManagerInterface $em): JsonResponse
+    {
+        $em->remove($persona);
         $em->flush();
-
-        return $this->json(['status' => 'Persona guardada con éxito'], 201);
+        return $this->json(['status' => 'Eliminado']);
     }
 }
