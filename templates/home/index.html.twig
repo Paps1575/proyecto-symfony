@@ -1,10 +1,72 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
-    <div style="text-align: center; padding: 50px; background: #fff; border-radius: 10px; border: 1px solid #ddd;">
-        <h1>Bienvenido</h1>
-        <p>Sistema de Arquitectura de Software</p>
-        <a href="{{ path('app_registro') }}" style="display: inline-block; padding: 15px 30px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 20px;">
-            Ir al Registro
-        </a>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 75vh;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .container-botones {
+            display: flex;
+            gap: 20px;
+            margin-top: 35px;
+        }
+
+        .btn-inicio {
+            display: inline-block;
+            text-decoration: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Botón para Registro */
+        .btn-registro {
+            background: linear-gradient(135px, #28a745 0%, #1e7e34 100%);
+            color: white;
+        }
+
+        /* Botón para el CRUD */
+        .btn-crud {
+            background: linear-gradient(135px, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .btn-inicio:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+            filter: brightness(1.1);
+        }
+    </style>
+
+    <div class="hero-section">
+        <h1 style="color: #333; font-size: 3.5rem; margin-bottom: 10px; font-weight: 800;">OutfitFlow</h1>
+        <p style="color: #666; font-size: 1.2rem; max-width: 600px;">
+            Sistema de Arquitectura de Software. Gestiona tus deidades y controla tus registros en Railway.
+        </p>
+
+        <div class="container-botones">
+            {# BOTÓN 1: VA DIRECTO AL FORMULARIO DE REGISTRO #}
+            <a href="{{ path('app_registro_api', {'action': 'nuevo'}) }}" class="btn-inicio btn-registro">
+                📝 Registrar Persona
+            </a>
+
+            {# BOTÓN 2: VA A LA TABLA (CRUD) #}
+            <a href="{{ path('app_registro_api') }}" class="btn-inicio btn-crud">
+                📊 Ver Tabla CRUD
+            </a>
+        </div>
     </div>
 {% endblock %}
