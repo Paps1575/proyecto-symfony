@@ -9,7 +9,7 @@ class RegistroDatos
     #[Assert\NotBlank(message: 'El nombre es obligatorio, no te hagas.')]
     #[Assert\Regex(
         pattern: '/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/',
-        message: 'El nombre no debe llevar números ni símbolos, puro texto jefe.'
+        message: 'El nombre no debe llevar números ni símbolos'
     )]
     public ?string $nombre = null;
 

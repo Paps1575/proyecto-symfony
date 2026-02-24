@@ -1,11 +1,10 @@
-# yaml-language-server: $schema=../vendor/symfony/routing/Loader/schema/routing.schema.json
-
-# This file is the entry point to configure the routes of your app.
-# Methods with the #[Route] attribute are automatically imported.
-# See also https://symfony.com/doc/current/routing.html
-
-# To list all registered routes, run the following command:
-#   bin/console debug:router
-
-controllers:
-    resource: routing.controllers
+#[Route('/crud-api', name: 'app_crud_api')]
+public function crudApi(): Response
+  {
+      return $this->render('registro_api/index.html.twig', [
+      'breadcrumbs' => [
+          ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
+          ['name' => 'CRUD API', 'url' => '#']
+      ]
+  ]);
+  }

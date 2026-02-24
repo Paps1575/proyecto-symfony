@@ -18,7 +18,7 @@ class AppController extends AbstractController
     public function index(): Response
     {
         return $this->render('home/index.html.twig', [
-            'breadcrumbs' => [['name' => 'Inicio', 'url' => '#']]
+            'breadcrumbs' => [['name' => 'Inicio', 'url' => '#']],
         ]);
     }
 
@@ -38,6 +38,7 @@ class AppController extends AbstractController
 
             if ($resp->isSuccess()) {
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
+
                 return $this->redirectToRoute('app_confirmar');
             }
             $this->addFlash('error', 'Google rechazó el captcha. Intenta de nuevo.');
@@ -47,8 +48,8 @@ class AppController extends AbstractController
             'formulario' => $form->createView(),
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
-                ['name' => 'Registro', 'url' => '#']
-            ]
+                ['name' => 'Registro', 'url' => '#'],
+            ],
         ]);
     }
 
@@ -56,13 +57,14 @@ class AppController extends AbstractController
     public function confirmar(Request $request): Response
     {
         $nombre = $request->getSession()->get('usuario_nombre', 'Usuario');
+
         return $this->render('app/confirmar.html.twig', [
             'nombre' => $nombre,
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
                 ['name' => 'Registro', 'url' => $this->generateUrl('app_registro')],
-                ['name' => 'Confirmar', 'url' => '#']
-            ]
+                ['name' => 'Confirmar', 'url' => '#'],
+            ],
         ]);
     }
 
@@ -84,8 +86,8 @@ class AppController extends AbstractController
             'breadcrumbs' => [
                 ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
                 ['name' => 'Confirmar', 'url' => $this->generateUrl('app_confirmar')],
-                ['name' => 'Éxito', 'url' => '#']
-            ]
+                ['name' => 'Éxito', 'url' => '#'],
+            ],
         ]);
     }
 }
