@@ -16,20 +16,17 @@ use Symfony\Component\Routing\Attribute\Route;
 class AppController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(): Response
-    {
+    public function index(): Response {
         return $this->render('home/index.html.twig');
     }
 
     #[Route('/crud-api', name: 'app_registro_api')]
-    public function crud(): Response
-    {
+    public function crud(): Response {
         return $this->render('registro_api/index.html.twig');
     }
 
     #[Route('/registro', name: 'app_registro')]
-    public function registro(Request $request): Response
-    {
+    public function registro(Request $request): Response {
         $datos = new RegistroDatos();
         $form = $this->createForm(RegistroType::class, $datos);
         $form->handleRequest($request);
@@ -43,28 +40,23 @@ class AppController extends AbstractController
                 $request->getSession()->set('usuario_nombre', $datos->nombre);
                 return $this->redirectToRoute('app_confirmar');
             }
-            $this->addFlash('error', 'Google rechazó el captcha.');
+            $this->addFlash('error', 'Captcha no válido.');
         }
 
-        return $this->render('app/registro.html.twig', [
-            'formulario' => $form->createView(),
-        ]);
+        return $this->render('app/registro.html.twig', ['formulario' => $form->createView()]);
     }
 
     #[Route('/carrusel', name: 'app_carrusel')]
-    public function carrusel(EntityManagerInterface $em): Response
-    {
+    public function carrusel(EntityManagerInterface $em): Response {
         $imagenes = $em->getRepository(ImagenCarrusel::class)->findAll();
-        return $this->render('carrusel/index.html.twig', [
-            'imagenes' => $imagenes,
-        ]);
+        return $this->render('carrusel/index.html.twig', ['imagenes' => $imagenes]);
     }
 
     #[Route('/carrusel/subir', name: 'app_carrusel_subir', methods: ['POST'])]
-    public function subir(Request $request, EntityManagerInterface $em): Response
-    {
+    public function subir(Request $request, EntityManagerInterface $em): Response {
         $archivo = $request->files->get('imagen');
         if ($archivo) {
+            // Aquí es donde tronaba por falta de symfony/mime
             $nuevoNombre = uniqid().'.'.$archivo->guessExtension();
             try {
                 $archivo->move($this->getParameter('kernel.project_dir').'/public/uploads', $nuevoNombre);
@@ -72,6 +64,7 @@ class AppController extends AbstractController
                 $img->setRuta($nuevoNombre);
                 $em->persist($img);
                 $em->flush();
+                $this->addFlash('success', '¡Imagen de deidad subida!');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error: ' . $e->getMessage());
             }
