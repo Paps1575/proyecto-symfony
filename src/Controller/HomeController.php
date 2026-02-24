@@ -17,4 +17,15 @@ class HomeController extends AbstractController
             ],
         ]);
     }
+
+    #[Route('/crud-api', name: 'app_crud_api')]
+    public function crudApi(): Response
+    {
+        return $this->render('registro_api/index.html.twig', [
+            'breadcrumbs' => [
+                ['name' => 'Inicio', 'url' => $this->generateUrl('app_home')],
+                ['name' => 'CRUD API', 'url' => '#']
+            ],
+        ]);
+    }
 }
