@@ -8,7 +8,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistroViewController extends AbstractController
 {
-    // Esta es la ruta que tu "home/index.html.twig" está gritando que no encuentra
     #[Route('/crud-api', name: 'app_registro_api')]
     public function index(): Response
     {
