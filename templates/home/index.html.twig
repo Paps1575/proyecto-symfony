@@ -1,28 +1,23 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <style>
-        .hero { height: 85vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: 'Segoe UI', sans-serif; }
+        .hero { height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-family: sans-serif; }
         .btn-group-custom { display: flex; gap: 15px; margin-top: 35px; }
         .btn-deidad { padding: 16px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; color: white; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .btn-deidad:hover { transform: translateY(-5px); filter: brightness(1.1); }
-        .verde { background: #28a745; }
-        .azul { background: #007bff; }
-        .morado { background: #6f42c1; }
+        .verde { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .azul { background: linear-gradient(135deg, #007bff, #0056b3); }
+        .morado { background: linear-gradient(135deg, #6f42c1, #4527a0); }
     </style>
 
     <div class="hero">
-        <h1>OutfitFlow</h1>
-        <p>Arquitectura de Software para Deidades</p>
+        <h1 style="font-size: 4rem; color: #333; font-weight: 800;">OutfitFlow</h1>
+        <p style="color: #666; font-size: 1.2rem;">Sistema de Arquitectura para Deidades</p>
 
         <div class="btn-group-custom">
-            {# ESTE YA MANDA AL REGISTRO REAL (app_registro), NO AL CRUD #}
             <a href="{{ path('app_registro') }}" class="btn-deidad verde">📝 Registrar</a>
-
-            {# ESTE MANDA AL CRUD API #}
             <a href="{{ path('app_registro_api') }}" class="btn-deidad azul">📊 Ver CRUD</a>
-
-            {# ESTE MANDA AL CARRUSEL #}
-            <a href="{{ path('app_carrusel_view') }}" class="btn-deidad morado">📸 Carrusel</a>
+            <a href="{{ path('app_carrusel') }}" class="btn-deidad morado">📸 Carrusel</a>
         </div>
     </div>
 {% endblock %}
