@@ -9,8 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Route('/api')]
 class ApiRegistroController extends AbstractController
@@ -28,9 +28,10 @@ class ApiRegistroController extends AbstractController
         $data = [];
         foreach ($personas as $p) {
             $data[] = [
-                'id' => $p->getId(), // Se envía para lógica interna, no se muestra en la interfaz
+                'id' => $p->getId(),
                 'nombre' => $p->getNombre(),
-                'email' => $p->getEmail() ?? 'N/A',
+                // CORRECCIÓN: Si te da error, checa si en tu Entidad es getCorreo() o getEmail()
+                'email' => method_exists($p, 'getEmail') ? $p->getEmail() : ($p->getCorreo() ?? 'N/A'),
             ];
         }
 
@@ -46,13 +47,13 @@ class ApiRegistroController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        // Validación de nombre: solo letras y espacios (sin números)
+        // CORRECCIÓN: NotBlank sin array de opciones para evitar el error del log
         $errors = $validator->validate($data['nombre'] ?? '', [
-            new Assert\NotBlank(['message' => 'El nombre es obligatorio.']),
+            new Assert\NotBlank(),
             new Assert\Regex([
                 'pattern' => '/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/',
-                'message' => 'El nombre no debe llevar números ni símbolos.',
-            ]),
+                'message' => 'El nombre no debe llevar números.'
+            ])
         ]);
 
         if (count($errors) > 0) {
@@ -61,8 +62,13 @@ class ApiRegistroController extends AbstractController
 
         $persona = new Registro();
         $persona->setNombre($data['nombre']);
-        $persona->setEmail($data['email']);
-        // Agrega setTelefono si tu entidad lo tiene configurado
+
+        // CORRECCIÓN DINÁMICA: Usa el método que exista en tu entidad
+        if (method_exists($persona, 'setEmail')) {
+            $persona->setEmail($data['email']);
+        } else {
+            $persona->setCorreo($data['email']);
+        }
 
         $em->persist($persona);
         $em->flush();
@@ -74,14 +80,11 @@ class ApiRegistroController extends AbstractController
     public function delete(int $id, RegistroRepository $repo, EntityManagerInterface $em): JsonResponse
     {
         $persona = $repo->find($id);
-
-        if (!$persona) {
-            return $this->json(['error' => 'No se encontró el registro'], 404);
-        }
+        if (!$persona) return $this->json(['error' => 'No encontrado'], 404);
 
         $em->remove($persona);
         $em->flush();
 
-        return $this->json(['status' => 'Registro eliminado correctamente']);
+        return $this->json(['status' => 'Eliminado']);
     }
 }
