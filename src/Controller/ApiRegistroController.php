@@ -9,31 +9,42 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api')]
 class ApiRegistroController extends AbstractController
 {
     /**
-     * Intenta obtener el valor del correo probando diferentes nombres de métodos comunes
+     * Intenta obtener el valor del correo probando diferentes nombres de métodos comunes.
      */
     private function extraerCorreo(Registro $p): string
     {
-        if (method_exists($p, 'getEmail') && $p->getEmail()) return $p->getEmail();
-        if (method_exists($p, 'getCorreo') && $p->getCorreo()) return $p->getCorreo();
-        if (method_exists($p, 'getMail') && $p->getMail()) return $p->getMail();
+        if (method_exists($p, 'getEmail') && $p->getEmail()) {
+            return $p->getEmail();
+        }
+        if (method_exists($p, 'getCorreo') && $p->getCorreo()) {
+            return $p->getCorreo();
+        }
+        if (method_exists($p, 'getMail') && $p->getMail()) {
+            return $p->getMail();
+        }
+
         return 'Sin correo';
     }
 
     /**
-     * Intenta guardar el correo probando diferentes setters
+     * Intenta guardar el correo probando diferentes setters.
      */
     private function asignarCorreo(Registro $p, string $valor): void
     {
-        if (method_exists($p, 'setEmail')) $p->setEmail($valor);
-        elseif (method_exists($p, 'setCorreo')) $p->setCorreo($valor);
-        elseif (method_exists($p, 'setMail')) $p->setMail($valor);
+        if (method_exists($p, 'setEmail')) {
+            $p->setEmail($valor);
+        } elseif (method_exists($p, 'setCorreo')) {
+            $p->setCorreo($valor);
+        } elseif (method_exists($p, 'setMail')) {
+            $p->setMail($valor);
+        }
     }
 
     #[Route('/personas', name: 'api_personas_list', methods: ['GET'])]
@@ -45,7 +56,7 @@ class ApiRegistroController extends AbstractController
         $personas = $repo->findBy([], ['id' => 'DESC'], $limit, $offset);
         $total = $repo->count([]);
 
-        $data = array_map(fn($p) => [
+        $data = array_map(fn ($p) => [
             'id' => $p->getId(),
             'nombre' => $p->getNombre(),
             'email' => $this->extraerCorreo($p),
@@ -65,14 +76,14 @@ class ApiRegistroController extends AbstractController
                 new Assert\NotBlank(['message' => 'El nombre no puede estar vacío.']),
                 new Assert\Regex([
                     'pattern' => '/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/',
-                    'message' => 'El nombre solo puede contener letras.'
-                ])
+                    'message' => 'El nombre solo puede contener letras.',
+                ]),
             ],
             'email' => [
                 new Assert\NotBlank(['message' => 'El correo es obligatorio.']),
-                new Assert\Email(['message' => 'El formato del correo no es válido.'])
+                new Assert\Email(['message' => 'El formato del correo no es válido.']),
             ],
-            'id' => new Assert\Optional() // El ID es opcional en POST
+            'id' => new Assert\Optional(), // El ID es opcional en POST
         ]);
 
         $violations = $validator->validate($data, $constraints);
@@ -110,6 +121,7 @@ class ApiRegistroController extends AbstractController
         $this->asignarCorreo($persona, $data['email']);
 
         $em->flush();
+
         return $this->json(['status' => '¡Actualizado!']);
     }
 
@@ -118,6 +130,7 @@ class ApiRegistroController extends AbstractController
     {
         $em->remove($persona);
         $em->flush();
+
         return $this->json(['status' => 'Eliminado']);
     }
 }
