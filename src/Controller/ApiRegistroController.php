@@ -9,8 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api')]
 class ApiRegistroController extends AbstractController
@@ -24,10 +24,10 @@ class ApiRegistroController extends AbstractController
         $personas = $repo->findBy([], ['id' => 'DESC'], $limit, $offset);
         $total = $repo->count([]);
 
-        $data = array_map(fn($p) => [
+        $data = array_map(fn ($p) => [
             'id' => $p->getId(),
             'nombre' => $p->getNombre() ?? 'Sin Nombre',
-            'email' => method_exists($p, 'getEmail') ? $p->getEmail() : 'Dato no disponible'
+            'email' => method_exists($p, 'getEmail') ? $p->getEmail() : 'Dato no disponible',
         ], $personas);
 
         return $this->json(['items' => $data, 'pages' => ceil($total / $limit), 'current_page' => $page]);
@@ -41,7 +41,7 @@ class ApiRegistroController extends AbstractController
         // CORRECCIÓN AQUÍ: NotBlank ya no acepta arrays de opciones en tu versión
         $errors = $validator->validate($data['nombre'] ?? '', [
             new Assert\NotBlank(), // Lo dejamos limpio para evitar el error de los logs
-            new Assert\Regex('/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/')
+            new Assert\Regex('/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/'),
         ]);
 
         if (count($errors) > 0) {
@@ -68,7 +68,7 @@ class ApiRegistroController extends AbstractController
         return $this->json([
             'id' => $persona->getId(),
             'nombre' => $persona->getNombre(),
-            'email' => method_exists($persona, 'getEmail') ? $persona->getEmail() : 'N/A'
+            'email' => method_exists($persona, 'getEmail') ? $persona->getEmail() : 'N/A',
         ]);
     }
 
@@ -81,6 +81,7 @@ class ApiRegistroController extends AbstractController
             $persona->setEmail($data['email']);
         }
         $em->flush();
+
         return $this->json(['status' => '¡Actualizado!']);
     }
 
@@ -89,6 +90,7 @@ class ApiRegistroController extends AbstractController
     {
         $em->remove($persona);
         $em->flush();
+
         return $this->json(['status' => 'Eliminado']);
     }
 }

@@ -3,67 +3,35 @@
 {% block body %}
     <style>
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
         .hero-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 75vh;
-            text-align: center;
-            font-family: 'Segoe UI', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 75vh; text-align: center; font-family: 'Segoe UI', sans-serif;
             animation: slideUp 0.8s ease-out;
         }
-
-        .container-botones {
-            display: flex;
-            gap: 20px;
-            margin-top: 35px;
-        }
-
+        .container-botones { display: flex; gap: 20px; margin-top: 35px; }
         .btn-inicio {
-            display: inline-block;
-            text-decoration: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: inline-block; text-decoration: none; padding: 18px 40px;
+            border-radius: 50px; font-size: 1.1rem; font-weight: bold;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-
-        /* Botón para Registro */
-        .btn-registro {
-            background: linear-gradient(135px, #28a745 0%, #1e7e34 100%);
-            color: white;
-        }
-
-        /* Botón para el CRUD */
-        .btn-crud {
-            background: linear-gradient(135px, #007bff 0%, #0056b3 100%);
-            color: white;
-        }
-
-        .btn-inicio:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-            filter: brightness(1.1);
-        }
+        .btn-registro { background: linear-gradient(135px, #28a745 0%, #1e7e34 100%); color: white; }
+        .btn-crud { background: linear-gradient(135px, #007bff 0%, #0056b3 100%); color: white; }
+        .btn-inicio:hover { transform: translateY(-5px); filter: brightness(1.1); }
     </style>
 
     <div class="hero-section">
         <h1 style="color: #333; font-size: 3.5rem; margin-bottom: 10px; font-weight: 800;">OutfitFlow</h1>
         <p style="color: #666; font-size: 1.2rem; max-width: 600px;">
-            Sistema de Arquitectura de Software. Gestiona tus deidades y controla tus registros en Railway.
+            Gestión de deidades y control de usuarios en Railway.
         </p>
 
         <div class="container-botones">
-            {# BOTÓN 1: VA DIRECTO AL FORMULARIO DE REGISTRO #}
-            <a href="{{ path('app_registro_api', {'action': 'nuevo'}) }}" class="btn-inicio btn-registro">
+            {# El botón verde manda el parámetro ?nuevo=true #}
+            <a href="{{ path('app_registro_api') }}?nuevo=true" class="btn-inicio btn-registro">
                 📝 Registrar Persona
             </a>
 
-            {# BOTÓN 2: VA A LA TABLA (CRUD) #}
+            {# El botón azul solo manda a la tabla #}
             <a href="{{ path('app_registro_api') }}" class="btn-inicio btn-crud">
                 📊 Ver Tabla CRUD
             </a>

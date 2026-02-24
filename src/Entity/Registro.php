@@ -33,6 +33,7 @@ class Registro
     public function setNombre(string $nombre): static
     {
         $this->nombre = $nombre;
+
         return $this;
     }
 
@@ -45,6 +46,7 @@ class Registro
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
         return $this;
     }
 }
