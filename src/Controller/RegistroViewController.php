@@ -13,4 +13,10 @@ class RegistroViewController extends AbstractController
     {
         return $this->render('registro_api/index.html.twig');
     }
+
+    #[Route('/carrusel', name: 'app_carrusel')]
+    public function carrusel(): Response
+    {
+        return $this->render('carrusel/index.html.twig');
+    }
 }
