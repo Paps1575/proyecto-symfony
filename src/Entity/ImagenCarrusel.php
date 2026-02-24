@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\ImagenCarruselRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ImagenCarruselRepository::class)]
+#[ORM\Entity] // <-- Quitamos el (repositoryClass: ...) porque no lo tienes creado
 class ImagenCarrusel
 {
     #[ORM\Id]
@@ -16,20 +15,7 @@ class ImagenCarrusel
     #[ORM\Column(length: 255)]
     private ?string $ruta = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getRuta(): ?string
-    {
-        return $this->ruta;
-    }
-
-    public function setRuta(string $ruta): self
-    {
-        $this->ruta = $ruta;
-
-        return $this;
-    }
+    public function getId(): ?int { return $this->id; }
+    public function getRuta(): ?string { return $this->ruta; }
+    public function setRuta(string $ruta): self { $this->ruta = $ruta; return $this; }
 }
