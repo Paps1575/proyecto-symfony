@@ -4,29 +4,31 @@
     <style>
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Estilos Claros y Modernos */
         body { background-color: #fcfcfc; color: #444; }
         .card-deidad { background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #f0f0f0; }
-        tr.fila-usuario:hover { background-color: #f9fbff; cursor: pointer; transition: 0.2s; }
 
-        /* Botones con Colores Suaves */
+        /* EFECTO EN FILAS: Más obvio que es un botón */
+        tr.fila-usuario { transition: 0.2s; cursor: pointer; }
+        tr.fila-usuario:hover { background-color: #f0f7ff; transform: scale(1.005); }
+        tr.fila-usuario:active { background-color: #e1efff; }
+
         .btn-pag { padding: 8px 14px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-weight: 600; background: #fff; color: #666; transition: 0.2s; }
         .btn-pag:hover:not(:disabled) { background: #f8f9fa; color: #007bff; border-color: #007bff; }
-        .btn-pag:disabled { cursor: not-allowed; opacity: 0.4; }
         .active { background: #e7f1ff !important; color: #007bff !important; border-color: #b6d4fe !important; }
 
-        .input-busqueda { padding: 10px 15px; border: 1px solid #e0e0e0; border-radius: 10px; outline: none; width: 250px; transition: 0.3s; background: #fff; }
+        .input-busqueda { padding: 10px 15px; border: 1px solid #e0e0e0; border-radius: 10px; outline: none; width: 250px; background: #fff; }
         .input-busqueda:focus { border-color: #007bff; box-shadow: 0 0 0 4px rgba(0,123,255,0.05); }
 
-        /* Alertas de Excepción (Rojo Suave) */
         .alerta-deidad {
             display: none; padding: 15px; border-radius: 10px; margin-bottom: 20px;
             font-weight: 600; animation: fadeIn 0.3s; border: 1px solid #feb2b2; background: #fff5f5; color: #c53030;
         }
 
-        /* Botón de Editar (Gris Claro en lugar de Negro) */
-        #btn-edit-link { background: #f0f2f5; color: #495057; border: 1px solid #dee2e6; }
-        #btn-edit-link:hover { background: #e2e6ea; }
+        /* TOOLTIP O MENSAJE DE AYUDA */
+        .guia-usuario {
+            background: #eef6ff; color: #3182ce; padding: 10px 15px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px;
+        }
     </style>
 
     <div style="max-width: 900px; margin: 40px auto; font-family: 'Inter', sans-serif;">
@@ -34,12 +36,17 @@
             <h2 id="titulo-pagina" style="color: #1a1a1a; font-weight: 800; letter-spacing: -0.5px;">Gestión de Usuarios</h2>
             <div style="display: flex; gap: 12px;">
                 <input type="text" id="input-buscar" placeholder="🔍 Buscar nombre..." class="input-busqueda">
-                <button id="btn-abrir-form" style="background: #007bff; color: white; border: none; padding: 10px 22px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.2s;">+ Nueva Persona</button>
+                <button id="btn-abrir-form" style="background: #007bff; color: white; border: none; padding: 10px 22px; border-radius: 10px; cursor: pointer; font-weight: 600;">+ Nueva Persona</button>
             </div>
         </div>
 
         {# VISTA 1: TABLA #}
         <div id="vista-tabla" style="animation: fadeIn 0.4s;">
+            {# MENSAJE PARA EL PROFE: "Presiona para más info" #}
+            <div class="guia-usuario">
+                <span>💡 Tip: Haz clic en cualquier fila para ver el detalle, editar o eliminar.</span>
+            </div>
+
             <div class="card-deidad">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
@@ -64,15 +71,15 @@
                     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                         <div style="flex: 1;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #718096;">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; transition: 0.3s;">
+                            <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none;">
                         </div>
                         <div style="flex: 1;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #718096;">Email:</label>
-                            <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; transition: 0.3s;">
+                            <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none;">
                         </div>
                     </div>
                     <div style="display: flex; gap: 12px; margin-top: 35px;">
-                        <button type="submit" id="btn-guardar" style="background: #38a169; color: white; border: none; padding: 12px 35px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s;">Guardar Datos</button>
+                        <button type="submit" id="btn-guardar" style="background: #38a169; color: white; border: none; padding: 12px 35px; border-radius: 10px; font-weight: 700; cursor: pointer;">Guardar Datos</button>
                         <button type="button" onclick="regresarALista()" style="background: #edf2f7; color: #4a5568; border: none; padding: 12px 35px; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancelar</button>
                     </div>
                 </form>
@@ -86,7 +93,7 @@
                 <h3 id="det-nombre" style="font-size: 28px; margin: 0; color: #1a202c; font-weight: 800;"></h3>
                 <p id="det-email" style="color: #3182ce; margin: 12px 0; font-size: 18px; font-weight: 500;"></p>
                 <div style="display: flex; justify-content: center; gap: 15px; margin-top: 35px; border-top: 1px solid #f0f0f0; padding-top: 30px;">
-                    <button id="btn-edit-link" style="padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 700;">Editar</button>
+                    <button id="btn-edit-link" style="padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 700; background: #f0f2f5; color: #495057; border: 1px solid #dee2e6;">Editar</button>
                     <button id="btn-delete-link" style="background: #fff5f5; color: #e53e3e; border: 1px solid #feb2b2; padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 700;">Eliminar</button>
                     <button onclick="regresarALista()" style="background: #f7fafc; border: 1px solid #edf2f7; padding: 12px 30px; border-radius: 10px; cursor: pointer; color: #718096;">Volver</button>
                 </div>
@@ -175,17 +182,14 @@
             e.preventDefault();
             const data = Object.fromEntries(new FormData(form).entries());
 
-            // --- VALIDACIONES PERRONAS ---
-            if (!data.nombre.trim()) return lanzarAlerta("El nombre es obligatorio, no lo dejes vacío.");
-            if (!data.email.trim()) return lanzarAlerta("El correo es indispensable para el registro.");
+            if (!data.nombre.trim()) return lanzarAlerta("El nombre es obligatorio.");
+            if (!data.email.trim()) return lanzarAlerta("El correo es indispensable.");
 
-            // Regex de Correo Válido
             const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!regexEmail.test(data.email)) return lanzarAlerta("Ese correo no parece válido. Revisa el @ y el dominio.");
+            if (!regexEmail.test(data.email)) return lanzarAlerta("Formato de correo inválido.");
 
-            // Regex de Nombre (solo letras y espacios)
             const regexNombre = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
-            if (!regexNombre.test(data.nombre)) return lanzarAlerta("El nombre solo puede contener letras y espacios.");
+            if (!regexNombre.test(data.nombre)) return lanzarAlerta("El nombre solo permite letras.");
 
             const url = editandoId ? `/api/personas/${editandoId}` : '/api/personas/nuevo';
 
@@ -198,18 +202,18 @@
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error || "Algo tronó en el servidor.");
+                    throw new Error(errorData.error || "Error en el servidor.");
                 }
 
-                alert(editandoId ? "¡Deidad actualizada!" : "¡Deidad guardada con éxito!");
+                alert(editandoId ? "¡Actualizado!" : "¡Guardado con éxito!");
                 regresarALista();
             } catch (err) {
-                lanzarAlerta("Excepción: " + err.message);
+                lanzarAlerta(err.message);
             }
         };
 
         async function eliminar(id) {
-            if (confirm("¿Estás seguro de borrar a esta deidad?")) {
+            if (confirm("¿Borrar definitivamente?")) {
                 await fetch(`/api/personas/${id}`, { method: 'DELETE' });
                 regresarALista();
             }
