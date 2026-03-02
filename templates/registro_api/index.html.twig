@@ -6,13 +6,19 @@
         body { background-color: #f8fafc; color: #334155; }
         .card-deidad { background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; }
 
-        /* Filas Interactivas */
-        tr.fila-usuario { transition: 0.2s; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
-        tr.fila-usuario:hover { background-color: #f8fbff; transform: scale(1.002); }
+        /* Filas de la Tabla */
+        tr.fila-usuario { border-bottom: 1px solid #f1f5f9; transition: 0.2s; }
+        tr.fila-usuario:hover { background-color: #f8fbff; }
 
-        /* Paginación Completa Pro */
-        .btn-pag { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 700; background: white; color: #64748b; transition: 0.2s; }
-        .btn-pag:hover:not(:disabled) { background: #f1f5f9; color: #3b82f6; border-color: #3b82f6; }
+        /* Botones en la Tabla (Estilo Claro) */
+        .btn-action { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; margin-left: 5px; }
+        .btn-edit { background: #eef2ff; color: #4338ca; border: 1px solid #e0e7ff; }
+        .btn-edit:hover { background: #e0e7ff; }
+        .btn-delete { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
+        .btn-delete:hover { background: #ffe4e6; }
+
+        /* Paginación */
+        .btn-pag { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 700; background: white; color: #64748b; }
         .active { background: #3b82f6 !important; color: white !important; border-color: #3b82f6 !important; }
 
         .input-pro { padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; transition: 0.3s; background: #fff; width: 100%; }
@@ -20,7 +26,7 @@
         .alerta-error { display: none; padding: 15px; border-radius: 12px; margin-bottom: 25px; font-weight: 700; animation: fadeIn 0.3s; background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
     </style>
 
-    <div style="max-width: 1000px; margin: 40px auto; font-family: sans-serif;">
+    <div style="max-width: 1100px; margin: 50px auto; font-family: sans-serif;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <h2 style="font-size: 2.2rem; font-weight: 800; color: #1e293b;">Gestión de Deidades</h2>
             <div style="display: flex; gap: 15px;">
@@ -29,11 +35,14 @@
             </div>
         </div>
 
+        {# VISTA 1: TABLA CON ACCIONES #}
         <div id="vista-tabla" style="animation: fadeIn 0.5s;">
             <div class="card-deidad">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead><tr style="text-align: left; color: #94a3b8; font-size: 13px; text-transform: uppercase;">
-                        <th style="padding: 20px;">Identidad</th><th style="padding: 20px;">Email</th>
+                        <th style="padding: 20px;">Nombre</th>
+                        <th style="padding: 20px;">Email</th>
+                        <th style="padding: 20px; text-align: right;">Acciones</th>
                     </tr></thead>
                     <tbody id="cuerpo-tabla"></tbody>
                 </table>
@@ -41,6 +50,7 @@
             </div>
         </div>
 
+        {# VISTA 2: FORMULARIO #}
         <div id="vista-formulario" style="display: none; animation: fadeIn 0.5s;">
             <div class="card-deidad">
                 <h3 id="form-titulo" style="margin-bottom: 30px; color: #1e293b;">Registro Celestial</h3>
@@ -53,19 +63,6 @@
                     <button type="submit" style="background: #10b981; color: white; border: none; padding: 12px 40px; border-radius: 12px; font-weight: 700; cursor: pointer;">Guardar</button>
                     <button type="button" onclick="regresarALista()" style="background: #f1f5f9; padding: 12px 40px; border-radius: 12px; font-weight: 600; border: none; margin-left: 10px;">Cancelar</button>
                 </form>
-            </div>
-        </div>
-
-        <div id="vista-detalle" style="display: none; animation: fadeIn 0.5s;">
-            <div class="card-deidad" style="text-align: center; padding: 50px;">
-                <div style="width: 80px; height: 80px; background: #eff6ff; border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #3b82f6;">👤</div>
-                <h3 id="det-nombre" style="font-size: 2.2rem; color: #1e293b;"></h3>
-                <p id="det-email" style="color: #3b82f6; font-size: 1.2rem;"></p>
-                <div style="margin-top: 40px; border-top: 1px solid #f1f5f9; padding-top: 30px;">
-                    <button id="btn-edit-link" style="background: #f1f5f9; padding: 12px 30px; border-radius: 12px; font-weight: 700; border: none;">Editar</button>
-                    <button id="btn-delete-link" style="background: #fff1f2; color: #e11d48; padding: 12px 30px; border-radius: 12px; font-weight: 700; border: none; margin-left: 15px;">Eliminar</button>
-                    <button onclick="regresarALista()" style="background: #f1f5f9; padding: 12px 30px; border-radius: 12px; border: none; margin-left: 15px;">Volver</button>
-                </div>
             </div>
         </div>
     </div>
@@ -88,13 +85,13 @@
         function regresarALista() {
             document.getElementById('vista-tabla').style.display = 'block';
             document.getElementById('vista-formulario').style.display = 'none';
-            document.getElementById('vista-detalle').style.display = 'none';
             editandoId = null; form.reset(); cargarPersonas();
         }
 
         document.getElementById('btn-abrir-form').onclick = () => {
             document.getElementById('vista-tabla').style.display = 'none';
             document.getElementById('vista-formulario').style.display = 'block';
+            document.getElementById('form-titulo').innerText = "Inscribir Deidad";
         };
 
         async function cargarPersonas(p = 1) {
@@ -102,30 +99,30 @@
             const data = await res.json();
             let items = data.items;
             if (busquedaActual) items = items.filter(i => i.nombre.toLowerCase().includes(busquedaActual.toLowerCase()));
+
             const cuerpo = document.getElementById('cuerpo-tabla');
             cuerpo.innerHTML = '';
             items.forEach(i => {
                 const f = document.createElement('tr'); f.className = 'fila-usuario';
-                f.innerHTML = `<td style="padding: 20px; font-weight: 600;">${i.nombre}</td><td style="padding: 20px; color: #64748b;">${i.email}</td>`;
-                f.onclick = () => verDetalle(i.id); cuerpo.appendChild(f);
+                f.innerHTML = `
+                    <td style="padding: 20px; font-weight: 600;">${i.nombre}</td>
+                    <td style="padding: 20px; color: #64748b;">${i.email}</td>
+                    <td style="padding: 20px; text-align: right;">
+                        <button class="btn-action btn-edit" onclick="prepararEdicion(${i.id}, '${i.nombre}', '${i.email}')">Editar</button>
+                        <button class="btn-action btn-delete" onclick="eliminar(${i.id}, '${i.nombre}')">Eliminar</button>
+                    </td>`;
+                cuerpo.appendChild(f);
             });
             actualizarPaginador(data.pages, data.current_page);
         }
 
-        async function verDetalle(id) {
-            const res = await fetch(`/api/personas/${id}`);
-            const p = await res.json();
-            document.getElementById('det-nombre').innerText = p.nombre;
-            document.getElementById('det-email').innerText = p.email;
-            document.getElementById('btn-delete-link').onclick = () => eliminar(id);
-            document.getElementById('btn-edit-link').onclick = () => {
-                editandoId = p.id; document.getElementById('nombre').value = p.nombre;
-                document.getElementById('email').value = p.email;
-                document.getElementById('vista-detalle').style.display = 'none';
-                document.getElementById('vista-formulario').style.display = 'block';
-            };
+        function prepararEdicion(id, nombre, email) {
+            editandoId = id;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('email').value = email;
+            document.getElementById('form-titulo').innerText = "Modificar Deidad";
             document.getElementById('vista-tabla').style.display = 'none';
-            document.getElementById('vista-detalle').style.display = 'block';
+            document.getElementById('vista-formulario').style.display = 'block';
         }
 
         form.onsubmit = async (e) => {
@@ -134,8 +131,6 @@
             if (!data.nombre.trim()) return lanzarAlerta("Nombre vacío.");
             const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regexEmail.test(data.email)) return lanzarAlerta("Correo inválido.");
-            const regexNombre = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
-            if (!regexNombre.test(data.nombre)) return lanzarAlerta("Nombre solo letras.");
 
             try {
                 const url = editandoId ? `/api/personas/${editandoId}` : '/api/personas/nuevo';
@@ -149,27 +144,22 @@
             } catch (err) { lanzarAlerta(err.message); }
         };
 
-        async function eliminar(id) { if (confirm("¿Borrar?")) { await fetch(`/api/personas/${id}`, { method: 'DELETE' }); regresarALista(); } }
+        async function eliminar(id, nombre) {
+            // ALERTA DE CONFIRMACIÓN QUE PIDIÓ EL CUKERO
+            if (confirm(`⚠️ ¡ATENCIÓN! ¿Estás seguro de que quieres borrar a "${nombre}"? Esta acción no se puede deshacer.`)) {
+                await fetch(`/api/personas/${id}`, { method: 'DELETE' });
+                cargarPersonas();
+            }
+        }
 
         function actualizarPaginador(total, actual) {
             const cont = document.getElementById('paginacion');
             cont.innerHTML = '';
-
-            const bIni = document.createElement('button');
-            bIni.innerText = '<<'; bIni.className = 'btn-pag';
-            bIni.disabled = (actual === 1); bIni.onclick = () => cargarPersonas(1);
-            cont.appendChild(bIni);
-
             for (let i = 1; i <= total; i++) {
                 const btn = document.createElement('button');
                 btn.innerText = i; btn.className = `btn-pag ${i === actual ? 'active' : ''}`;
                 btn.onclick = () => cargarPersonas(i); cont.appendChild(btn);
             }
-
-            const bFin = document.createElement('button');
-            bFin.innerText = '>>'; bFin.className = 'btn-pag';
-            bFin.disabled = (actual === total); bFin.onclick = () => cargarPersonas(total);
-            cont.appendChild(bFin);
         }
 
         cargarPersonas();
