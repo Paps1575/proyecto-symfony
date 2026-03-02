@@ -17,8 +17,10 @@
         .btn-delete { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
         .btn-delete:hover { background: #ffe4e6; }
 
-        /* Paginación */
-        .btn-pag { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 700; background: white; color: #64748b; }
+        /* Paginación Completa */
+        .btn-pag { padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: 700; background: white; color: #64748b; margin: 0 2px; }
+        .btn-pag:hover:not(:disabled) { background: #f1f5f9; color: #3b82f6; border-color: #3b82f6; }
+        .btn-pag:disabled { opacity: 0.5; cursor: not-allowed; }
         .active { background: #3b82f6 !important; color: white !important; border-color: #3b82f6 !important; }
 
         .input-pro { padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; transition: 0.3s; background: #fff; width: 100%; }
@@ -39,14 +41,14 @@
         <div id="vista-tabla" style="animation: fadeIn 0.5s;">
             <div class="card-deidad">
                 <table style="width: 100%; border-collapse: collapse;">
-                    <thead><tr style="text-align: left; color: #94a3b8; font-size: 13px; text-transform: uppercase;">
+                    <thead><tr style="text-align: left; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
                         <th style="padding: 20px;">Nombre</th>
                         <th style="padding: 20px;">Email</th>
                         <th style="padding: 20px; text-align: right;">Acciones</th>
                     </tr></thead>
                     <tbody id="cuerpo-tabla"></tbody>
                 </table>
-                <div id="paginacion" style="display: flex; gap: 8px; justify-content: center; margin-top: 40px;"></div>
+                <div id="paginacion" style="display: flex; gap: 5px; justify-content: center; margin-top: 40px;"></div>
             </div>
         </div>
 
@@ -57,11 +59,17 @@
                 <div id="alerta-msj" class="alerta-error"></div>
                 <form id="form-registro" novalidate>
                     <div style="display: flex; gap: 20px; margin-bottom: 25px;">
-                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" class="input-pro" style="flex: 1;">
-                        <input type="email" id="email" name="email" placeholder="Email" class="input-pro" style="flex: 1;">
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 700; color: #64748b;">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" class="input-pro">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 700; color: #64748b;">Email:</label>
+                            <input type="email" id="email" name="email" class="input-pro">
+                        </div>
                     </div>
                     <button type="submit" style="background: #10b981; color: white; border: none; padding: 12px 40px; border-radius: 12px; font-weight: 700; cursor: pointer;">Guardar</button>
-                    <button type="button" onclick="regresarALista()" style="background: #f1f5f9; padding: 12px 40px; border-radius: 12px; font-weight: 600; border: none; margin-left: 10px;">Cancelar</button>
+                    <button type="button" onclick="regresarALista()" style="background: #f1f5f9; color: #475569; border: none; padding: 12px 40px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-left: 10px;">Cancelar</button>
                 </form>
             </div>
         </div>
@@ -145,8 +153,7 @@
         };
 
         async function eliminar(id, nombre) {
-            // ALERTA DE CONFIRMACIÓN QUE PIDIÓ EL CUKERO
-            if (confirm(`⚠️ ¡ATENCIÓN! ¿Estás seguro de que quieres borrar a "${nombre}"? Esta acción no se puede deshacer.`)) {
+            if (confirm(`⚠️ ¿Seguro que quieres borrar a "${nombre}"?`)) {
                 await fetch(`/api/personas/${id}`, { method: 'DELETE' });
                 cargarPersonas();
             }
@@ -155,11 +162,31 @@
         function actualizarPaginador(total, actual) {
             const cont = document.getElementById('paginacion');
             cont.innerHTML = '';
+
+            // Botón Inicio (<<)
+            const btnIni = document.createElement('button');
+            btnIni.innerText = '« Inicio';
+            btnIni.className = 'btn-pag';
+            btnIni.disabled = (actual === 1);
+            btnIni.onclick = () => cargarPersonas(1);
+            cont.appendChild(btnIni);
+
+            // Números de Página
             for (let i = 1; i <= total; i++) {
                 const btn = document.createElement('button');
-                btn.innerText = i; btn.className = `btn-pag ${i === actual ? 'active' : ''}`;
-                btn.onclick = () => cargarPersonas(i); cont.appendChild(btn);
+                btn.innerText = i;
+                btn.className = `btn-pag ${i === actual ? 'active' : ''}`;
+                btn.onclick = () => cargarPersonas(i);
+                cont.appendChild(btn);
             }
+
+            // Botón Final (>>)
+            const btnFin = document.createElement('button');
+            btnFin.innerText = 'Final »';
+            btnFin.className = 'btn-pag';
+            btnFin.disabled = (actual === total);
+            btnFin.onclick = () => cargarPersonas(total);
+            cont.appendChild(btnFin);
         }
 
         cargarPersonas();
